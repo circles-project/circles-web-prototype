@@ -17,18 +17,19 @@ interface Props {
 const SetPassphrase = ({page, pageUpdate} : Props) => {
 
     const passwordInput = useRef<HTMLInputElement>(null);
+    const confirmPasswordInput = useRef<HTMLInputElement>(null);
+
     const handleClick = () => {
-        // console.log("Set Password");
-        // // TODO: Do I need this line?
-        // page["password"] = "some password";
-        // pageUpdate({...page, "password":page["password"]});
-        // console.log(page);
         if (passwordInput.current !== null) {
+            if (passwordInput.current.value !== confirmPasswordInput.current?.value) {
+                console.log("Passwords don't match");
+                return;
+            }
             let authBody = {
                 "auth": {
-                    "type": "m.enroll.email.request_token",
+                    "type": "m.enroll.password",
                     "session": page.session_id,
-                    "email": passwordInput.current.value
+                    "new_password": passwordInput.current.value
                 }
             }
             fetch("https://matrix.varun.circles-dev.net/_matrix/client/v3/register", {
@@ -40,26 +41,30 @@ const SetPassphrase = ({page, pageUpdate} : Props) => {
             }})
             .then((response) => response.json())
             .then(json => {
-                console.log(json);
+
                 if (json.error) {
-                    console.log("Email invalid: " + json.error);
-                } else if (emailInput.current !== null) {
+                    console.log("Password invalid: " + json.error);
+                } else if (passwordInput.current !== null) {
                     console.log(json);
-                    page["email"] = emailInput.current.value;
-                    pageUpdate({...page, "email": emailInput.current.value});
-                    console.log("Email Chosen: " + page.email);
+                    page["email"] = passwordInput.current.value;
+                    pageUpdate({...page, "password": passwordInput.current.value});
+                    console.log("Password Chosen: " + page.email);
                 } else {
-                    console.log("Email is null");
+                    console.log("Password is null");
                 }
             });
         } else {
-            console.log("Email is null");
+            //TODO: Add error output to user
+            console.log("Password is null");
         }
     }
+
     if (page["correctCode"] && page["password"] === "") {
         return (
             <>
                 <h1>Set Passphrase</h1>
+                <input type="text" ref={passwordInput} placeholder="Password" />
+                <input type="text" ref={confirmPasswordInput} placeholder="Confirm Password" />
                 <button onClick={handleClick}>Submit</button>
             </>
         );

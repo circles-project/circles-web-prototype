@@ -60,12 +60,11 @@ function LandingPage() {
 
     return (
         <>
-            <h1>Circles</h1>
-            <h2>Safe and Encrypted Networking</h2>
-
-            <button onClick={handleClick}>Sign Up</button>
-            <ReactModal isOpen={isRegistering}>
-                <ReviewTerms page={userStages} pageUpdate={setUserStages}/>
+            <h1 style={{}}>Circles</h1>
+            <h2 style={{}}>Safe and Encrypted Networking</h2>
+            <button style={{}} onClick={handleClick}>Sign Up</button>
+            <ReactModal isOpen={isRegistering} style={{overlay: {position: "absolute",  width: "50%", left: "25%"}, content: {alignItems: "center"}}}>
+                <ReviewTerms  page={userStages} pageUpdate={setUserStages}/>
                 <ChooseUser page={userStages} pageUpdate={setUserStages}/>
                 <VerifyEmail page={userStages} pageUpdate={setUserStages}/>
                 <CheckEmailCode page={userStages} pageUpdate={setUserStages}/>
