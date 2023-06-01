@@ -1,9 +1,11 @@
 import React from 'react';
-import LandingPage from './screens/LandingPage';
+import LandingPage from './screens/Registration/LandingPage/LandingPage.tsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const App = () => {
   return (
-    <div style={{position: "absolute", top: "25%", left: "28%",width: 500, textAlign: "center"}}>
+    <div style={{}}>
       <LandingPage />
     </div>
   );

@@ -1,0 +1,20 @@
+.cancelBtn {
+    position: sticky;
+    display: inline-block;
+    height: 35%;
+    background-color: white;
+    color: red;
+    border: none;
+    top: 95%;
+}
+
+.homeCentering {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    margin-top: 5%;
+    text-align: center;
+    
+    width: 50%;
+    height: 50%;
+}

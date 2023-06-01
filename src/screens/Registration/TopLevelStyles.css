@@ -1,0 +1,35 @@
+.defaultSubmitBtn {
+    position: sticky;
+    top: 87.5%;
+    display: inline-block;
+    height: 35%;
+    font-size: 20px;
+    background-color: blue;
+    color:white;
+}
+
+.invisibleInput {
+    border: none;
+    text-align: center; 
+    box-shadow: none;
+    outline: none;
+    font-size: 300%;
+    width: 95%;
+    padding-left: 5%;
+}
+
+.registrationTitle {
+    position: sticky;
+    top: 3%;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.feedbackText {
+    text-align: center;
+    margin-bottom: -40%;
+    height: 20%;
+    font-size: 150%;
+    
+}
