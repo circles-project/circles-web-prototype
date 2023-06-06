@@ -12,6 +12,7 @@ import { _generate_random_bytes } from "../bsspeke/a.out.js";
 import RegistrationParams from "../Interfaces/RegistrationParams.js";
 import '../RegistrationConstants.ts';
 import { REGISTRATION_URL } from "../RegistrationConstants.ts";
+// import SetupProfile from "../../ProfileSetup/SetupProfile.tsx";
 
 function LandingPage() {
 
@@ -83,7 +84,7 @@ function LandingPage() {
                     <ChooseUser page={userStages} pageUpdate={setUserStages} />
                     <VerifyEmail page={userStages} pageUpdate={setUserStages} />
                     <CheckEmailCode page={userStages} pageUpdate={setUserStages} />
-                    <SetPassphrase page={userStages} pageUpdate={setUserStages} setPasswordParams={registrationParams["m.enroll.bsspeke-ecc.oprf"]}/>
+                    <SetPassphrase page={userStages} pageUpdate={setUserStages} setPasswordParams={registrationParams["m.enroll.bsspeke-ecc.oprf"]} setRegistering={setIsRegistering}/>
                 </>
             ) : null}
             <LoadingScreen page={userStages} />
@@ -91,6 +92,7 @@ function LandingPage() {
               Cancel
             </button>
           </ReactModal>
+          {/* <SetupProfile/> */}
         </>
       );
       

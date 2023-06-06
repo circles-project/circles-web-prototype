@@ -11,9 +11,10 @@ interface Props {
     page: RegistrationProps;
     pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
     setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"];
+    setRegistering: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SetPassphrase = ({page, pageUpdate, setPasswordParams} : Props) => {
+const SetPassphrase = ({page, pageUpdate, setPasswordParams, setRegistering} : Props) => {
 
     const [passwordInput, setPasswordInput] = useState<string>("");
     const confirmPasswordInput = useRef<HTMLInputElement>(null);
@@ -100,6 +101,7 @@ const SetPassphrase = ({page, pageUpdate, setPasswordParams} : Props) => {
                             console.log(json);
                             page["password"] = true;
                             pageUpdate({...page, "password": true, "loading": false});
+                            setRegistering(false);
                         }
                     })
                     .catch((error) => {
@@ -133,6 +135,7 @@ const SetPassphrase = ({page, pageUpdate, setPasswordParams} : Props) => {
                     <Button className="defaultSubmitBtn" onClick={handleClick}>Submit</Button>
                 </>
             )}
+            
         </>
     );
 }
