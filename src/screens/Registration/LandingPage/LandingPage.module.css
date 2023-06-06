@@ -1,11 +1,13 @@
 .cancelBtn {
-    position: sticky;
-    display: inline-block;
-    height: 35%;
+    position: relative;
+    /* display: inline-block; */
+    height: 25%;
+    padding-top: 0px;
+    padding-bottom: 0px;
     background-color: white;
     color: red;
     border: none;
-    top: 95%;
+    top: 90%;
 }
 
 .homeCentering {

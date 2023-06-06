@@ -8,7 +8,7 @@ import SetPassphrase from "../SetPassphrase";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import  Button  from "react-bootstrap/Button";
 import styles from "./LandingPage.module.css";
-import { _generate_random_bytes } from "../bsspeke/a.out.js";
+import { _generate_random_bytes } from "../bsspeke/EmccBsspeke.js";
 import RegistrationParams from "../Interfaces/RegistrationParams.js";
 import '../RegistrationConstants.ts';
 import { REGISTRATION_URL } from "../RegistrationConstants.ts";

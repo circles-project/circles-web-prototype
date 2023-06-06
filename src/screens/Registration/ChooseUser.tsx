@@ -63,7 +63,7 @@ const ChooseUser = ({ page, pageUpdate}: Props) => {
           <h1 className="registrationTitle">Choose a Username</h1>
           <input className="invisibleInput" ref={username} type="text" placeholder="Username" style={{position: "relative", paddingTop: "10%"}} />
           <text className="feedbackText" style={{color: redText}}>{feedback}</text>
-          <Button className={"defaultSubmitBtn"} onClick={handleClick}>Submit</Button>
+          <Button variant="primary" className="defaultSubmitBtn" onClick={handleClick}>Submit</Button>
         </>
       )}
     </>

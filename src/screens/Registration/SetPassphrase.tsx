@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap";
 import "./TopLevelStyles.css";
 import PasswordStrengthBar from "react-password-strength-bar";
 import RegistrationParams from "./Interfaces/RegistrationParams";
-import Client from "./bsspeke/BSSpeke.js";
+import Client from "./bsspeke/BSSpekeWrapper.js";
 import { DOMAIN, REGISTRATION_URL} from './RegistrationConstants.ts'
 
 interface Props {

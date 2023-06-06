@@ -8,6 +8,7 @@ import styles from './Review.module.css';
 import RegistrationParams from '../Interfaces/RegistrationParams';
 import '../RegistrationConstants.ts'
 import { REGISTRATION_URL } from '../RegistrationConstants.ts';
+import '../TopLevelStyles.css';
 
 interface Props {
     page: RegistrationProps
@@ -64,7 +65,7 @@ const ReviewTerms = ({page, pageUpdate, termsParams} : Props) => {
                         <Terms title={title} termsParams={termsParams}/>
                     </div>
 
-                    <Button variant="primary" className='submitBtn' onClick={handleClick}>Got It</Button>
+                    <Button variant="primary" className='defaultSubmitBtn' onClick={handleClick}>Got It</Button>
                 </>
             )}
         </>

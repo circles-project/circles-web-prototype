@@ -1,11 +1,13 @@
 .defaultSubmitBtn {
     position: sticky;
     top: 87.5%;
-    display: inline-block;
+    /* display: inline-block; */
     height: 35%;
     font-size: 20px;
     background-color: blue;
     color:white;
+    text-align: center;
+    vertical-align: center;
 }
 
 .invisibleInput {

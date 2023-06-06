@@ -8,8 +8,12 @@ interface Props {
 const PrivacyPolicy = ({title, termsParams}: Props) => {
     return (
         <>
+
             {title === termsParams.policies[0].name + " " + termsParams.policies[0].version && (
-                <div className="container">
+                <a href={termsParams.policies[0].en.url}>Click Here to Review Privacy Policy</a>
+            )
+
+                /*<div className="container">
                     <h2 className="fw-bold mb-3">The Service</h2>
                     <p className="lead fw-normal text-muted mb-4">This document lets you know exactly what information we collect from you, what data we can observe as you use the service, and how we use that information.</p><p className="lead fw-normal text-normal mb-4">Circuli is an online service based on Matrix and focused on social networking. It is accessible online at the circu.li domain and various subdomains, and accessed through the Circles app or another Matrix client. The service is provided by FUTO Holdings Inc. (“FUTO”). This Statement of Privacy applies to use of the Circles app as well as via other clients, and this statement governs data collection and usage. By using the Circu.li service (the “Service”), either on the web or through an app, you consent to the data practices described in this statement.</p>
                     <h2 className="fw-bold mb-3">What Data Do We Collect, And How Do We Collect It?</h2>
@@ -100,7 +104,7 @@ const PrivacyPolicy = ({title, termsParams}: Props) => {
                     <p className="lead fw-normal text-normal mb-4">Version 1.1</p>
                     <p className="lead fw-normal text-normal mb-4">Effective as of Nov 7, 2022</p>
                 </div>
-            )}
+            )*/}
         </>
     );
 }
