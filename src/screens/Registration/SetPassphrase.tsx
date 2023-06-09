@@ -6,15 +6,16 @@ import PasswordStrengthBar from "react-password-strength-bar";
 import RegistrationParams from "./Interfaces/RegistrationParams";
 import Client from "./bsspeke/BSSpekeWrapper.js";
 import { DOMAIN, REGISTRATION_URL} from './RegistrationConstants.ts'
+import RegistrationResponse from "./Interfaces/RegistrationResponse.js";
 
 interface Props {
     page: RegistrationProps;
     pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
     setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"];
-    setRegistering: React.Dispatch<React.SetStateAction<boolean>>;
+    setRegistrationResponse: React.Dispatch<React.SetStateAction<RegistrationResponse | null>>;
 }
 
-const SetPassphrase = ({page, pageUpdate, setPasswordParams, setRegistering} : Props) => {
+const SetPassphrase = ({page, pageUpdate, setPasswordParams, setRegistrationResponse} : Props) => {
 
     const [passwordInput, setPasswordInput] = useState<string>("");
     const confirmPasswordInput = useRef<HTMLInputElement>(null);
@@ -101,7 +102,7 @@ const SetPassphrase = ({page, pageUpdate, setPasswordParams, setRegistering} : P
                             console.log(json);
                             page["password"] = true;
                             pageUpdate({...page, "password": true, "loading": false});
-                            setRegistering(false);
+                            setRegistrationResponse(json);
                         }
                     })
                     .catch((error) => {

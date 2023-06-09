@@ -5,7 +5,6 @@ interface RegistrationProps {
     "email": boolean;
     "correctCode": boolean;
     "password": boolean;
-    "passwordConfirmed": boolean;
     "loading": boolean;
   }
   

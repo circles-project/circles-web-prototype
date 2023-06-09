@@ -42,7 +42,6 @@ const CheckEmailCode = ({page, pageUpdate} : Props) => {
                     console.log("Error: " + json.error);
                     setFeedback("Error: " + json.error);
                 } else {
-                    console.log(json);
                     page["email"] = true;
                     pageUpdate({...page, "email": true});
                 } 
