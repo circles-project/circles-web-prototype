@@ -1,0 +1,80 @@
+.separator {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000000;
+    margin-bottom: 20px;
+}
+
+.circleRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.title {
+    position: relative;
+    font-size: 250%;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 10%;
+    width: 80%;
+    top: 20%;
+}
+
+.profilePic {
+    position: relative;
+    top: 25%;
+    width: 20%;
+    margin-left: 40%;
+    vertical-align: center;
+    justify-self: center;
+
+}
+
+.circlesPics {
+    position: relative;
+    top: 25%;
+    width: 30%;
+    vertical-align: center;
+    justify-self: center;
+
+}
+
+.displayName {
+    position: relative;
+    top: 40%;
+    border: none;
+    text-align: center;
+    font-size: 150%;
+    vertical-align: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
+
+}
+
+.nextBtn {
+    position: relative;
+    top: 60%;
+    background-color: blue;
+    color: white;
+    border: none;
+    text-align: center;
+    vertical-align: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
+}
+
+.choosePhotoInput {
+    position: relative;
+    top: 35%;
+    height: 5%;
+    width: 100%;
+    border: none;
+    text-align: center;
+    box-shadow: none;
+    outline: none;
+    font-size: 100%;
+    padding-left: 5%;
+}

@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import '../TopLevelStyles.css';
 import { Button } from 'react-bootstrap';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './Terms';
 import RegistrationProps from '../Interfaces/RegistrationProps';
-import styles from './Review.module.css';
 import RegistrationParams from '../Interfaces/RegistrationParams';
 import '../RegistrationConstants.ts'
 import { REGISTRATION_URL } from '../RegistrationConstants.ts';
-import '../TopLevelStyles.css';
+import topStyles from '../commonStyles.module.css'
 
 interface Props {
     page: RegistrationProps
@@ -16,10 +14,10 @@ interface Props {
     termsParams: RegistrationParams["m.login.terms"];
 }
 
-const ReviewTerms = ({page, pageUpdate, termsParams} : Props) => {
+const ReviewTerms = ({ page, pageUpdate, termsParams }: Props) => {
     const [title, setTitle] = useState(termsParams.policies[0].name + " " + termsParams.policies[0].version);
 
-    
+
     // console.log("termsParams: " + termsParams);
     const handleClick = () => {
         if (title === "privacy " + termsParams.policies[0].version) {
@@ -31,41 +29,42 @@ const ReviewTerms = ({page, pageUpdate, termsParams} : Props) => {
                     "session": page.session_id,
                 }
             }
-            pageUpdate({...page, "loading":true});
+            pageUpdate({ ...page, "loading": true });
             fetch(REGISTRATION_URL, {
                 method: "POST",
                 body: JSON.stringify(authBody),
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
-            }})
-            .then((response) => response.json())
-            .then(json => {
-                console.log(json);
-
-                page["terms-accepted"] = true;
-                pageUpdate({...page, "terms-accepted":true, "loading":false});
+                }
             })
-            .catch((error) => {
-                console.log("Error: " + error);
-                pageUpdate({...page, "loading":false});
-            });
+                .then((response) => response.json())
+                .then(json => {
+                    console.log(json);
+
+                    page["terms-accepted"] = true;
+                    pageUpdate({ ...page, "terms-accepted": true, "loading": false });
+                })
+                .catch((error) => {
+                    console.log("Error: " + error);
+                    pageUpdate({ ...page, "loading": false });
+                });
         }
     }
-    
+
     return (
         <>
             {!page["terms-accepted"] && !page["loading"] && (
                 <>
-                    <h1 className="registrationTitle">Review {title}</h1>
+                    <h1 className={topStyles.registrationTitle}>Review {title}</h1>
 
                     {/* Future Idea: Might be cleaner to have the links to the terms/policy instead of embedding */}
-                    <div className={styles.overflowText}>
-                        <PrivacyPolicy title={title} termsParams={termsParams}/>
-                        <Terms title={title} termsParams={termsParams}/>
+                    <div >
+                        <PrivacyPolicy title={title} termsParams={termsParams} />
+                        <Terms title={title} termsParams={termsParams} />
                     </div>
 
-                    <Button variant="primary" className='defaultSubmitBtn' onClick={handleClick}>Got It</Button>
+                    <Button variant="primary" className={topStyles.defaultSubmitBtn} onClick={handleClick}>Got It</Button>
                 </>
             )}
         </>

@@ -1,12 +1,12 @@
 import VerifyEmail from "../VerifyEmail";
 import ReviewTerms from "../ReviewTerms/ReviewTermsAndPolicy.js";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import ChooseUser from "../ChooseUser";
 import ReactModal from 'react-modal';
 import CheckEmailCode from "../CheckEmailCode.js";
-import SetPassphrase from "../SetPassphrase";
+import SetPassphrase from "../SetPassphrase/SetPassphrase.tsx";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
-import Button from "react-bootstrap/Button";
+import { Button } from "react-bootstrap";
 import styles from "./LandingPage.module.css";
 import { _generate_random_bytes } from "../bsspeke/EmccBsspeke.js";
 import RegistrationParams from "../Interfaces/RegistrationParams.js";
@@ -16,6 +16,7 @@ import SetupProfile from "../../ProfileSetup/SetupProfile.tsx";
 import SetupCircles from "../../ProfileSetup/SetupCircles.tsx";
 import SignupSuccess from "../SignupSuccess.tsx";
 import RegistrationResponse from "../Interfaces/RegistrationResponse.js";
+import SetupDone from "../../ProfileSetup/SetupDone.tsx";
 
 function LandingPage() {
 
@@ -108,12 +109,12 @@ function LandingPage() {
         </button>
       </ReactModal>
 
-      {/* <SetupProfile/> */}
-      <ReactModal isOpen={isSettingUpProfile}>
+      {/* Profile Setup Components */}
+      <ReactModal style={{ overlay: { position: "absolute", width: "50%", left: "25%" } }} isOpen={isSettingUpProfile}>
         <SetupProfile page={profileSetupStages} pageUpdate={setProfileSetupStages} regResponse={registrationResponse} />
-        {/* TODO: Connect Setupprofile to SetupCircles */}
         <SetupCircles page={profileSetupStages} pageUpdate={setProfileSetupStages} regResponse={registrationResponse} />
         <LoadingScreen page={profileSetupStages} />
+        <SetupDone page={profileSetupStages} />
       </ReactModal>
     </>
   );

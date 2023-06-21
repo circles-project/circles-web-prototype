@@ -1,22 +1,22 @@
 import RegistrationParams from "../Interfaces/RegistrationParams";
 
-function encodeUTF8(str: string): Uint8Array {
-  const encoder = new TextEncoder();
-  return encoder.encode(str);
-}
-
 // Class to wrap the bsspeke client and interact with emscripten compiled code
 class Client {
   private ctx;
 
   constructor(user_id: string, server_id: string, password: string) {
     const uid_utf8 = encodeUTF8(user_id);
+    console.log("decoded uid_utf8: ", uid_utf8, "uid_utf8.length: ", uid_utf8.length);
     const sid_utf8 = encodeUTF8(server_id);
+    console.log("sid_utf8: ", sid_utf8, "sid_utf8.length: ", sid_utf8.length);
     const pwd_utf8 = encodeUTF8(password);
+    console.log("pwd_utf8: ", pwd_utf8, "pwd_utf8.length: ", pwd_utf8.length);
 
     // Calling emscriten compiled bsspeke code to generate client
     this.ctx = Module.ccall("generate_client", "number", [], []);
-    Module.ccall("bsspeke_client_init", "number", ["number", "string", "number", "string", "number", "string", "number"], [this.ctx, String(uid_utf8), uid_utf8.length, String(sid_utf8), sid_utf8.length, String(pwd_utf8), pwd_utf8.length]);
+    console.log("ctx: ", this.ctx);
+    const success = Module.ccall("bsspeke_client_init", "number", ["number", "string", "number", "string", "number", "string", "number"], [this.ctx, uid_utf8, uid_utf8.length, sid_utf8, sid_utf8.length, pwd_utf8, pwd_utf8.length]);
+    console.log("Client init success: ", success);
   }
 
   generateBlind(): Uint8Array {
@@ -37,11 +37,47 @@ class Client {
 
     const PArray = new Uint8Array(Module.HEAPU8.buffer, P, 32);
     const VArray = new Uint8Array(Module.HEAPU8.buffer, V, 32);
-    Module._free(P);
-    Module._free(V);
 
     return { PArray, VArray };
   }
 }
+
+function encodeUTF8(str: string): string {
+  // Encode the string from UTF-16 to UTF-8
+  const encoder = new TextEncoder();
+  const utf8Array = encoder.encode(str);
+
+  // Convert the UTF-8 array to a string representation
+  const utf8EncodedString = String.fromCharCode(...utf8Array);
+  return utf8EncodedString;
+
+}
+
+export function decodeUTF8(bytes: Uint8Array): string {
+  const utf8Decoder = new TextDecoder("utf-8");
+  return utf8Decoder.decode(bytes);
+}
+
+// export function encodeHextoBase64(hexArray: Uint8Array): string {
+
+//   // Convert Uint8 array to hexadecimal string
+
+//   const hexString = Array.prototype.reduce.call(hexArray, (str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+
+//   console.log("Hexstring: ", hexString);
+//   const base64String = btoa(hexString as string);
+
+//   return base64String;
+// }
+
+// export function decodeBase64toHex(base64String: string): string {
+  
+//     const b64Decoded = atob(base64String);
+
+//   return b64Decoded;
+// }
+
+
+
 
 export default Client;

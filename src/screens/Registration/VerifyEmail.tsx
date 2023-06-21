@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRef } from 'react';
-import './TopLevelStyles.css';
+import styles from './commonStyles.module.css';
 import { Button } from 'react-bootstrap';
 import RegistrationProps from './Interfaces/RegistrationProps';
 import './RegistrationConstants.ts'
@@ -11,14 +11,14 @@ interface Props {
     pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
 }
 
-const CheckEmailCode = ({page, pageUpdate} : Props) => {
+const CheckEmailCode = ({ page, pageUpdate }: Props) => {
 
     const emailInput = useRef<HTMLInputElement>(null);
     const [feedback, setFeedback] = useState<string>("Enter an email");
-    let redText = feedback === "Enter an email" ? "black" : "red" ;
+    let redText = feedback === "Enter an email" ? "black" : "red";
 
     const handleClick = () => {
-        
+
         if (emailInput.current !== null) {
             let authBody = {
                 "auth": {
@@ -27,46 +27,47 @@ const CheckEmailCode = ({page, pageUpdate} : Props) => {
                     "email": String(emailInput.current.value)
                 }
             }
-            pageUpdate({...page, "loading": true});
+            pageUpdate({ ...page, "loading": true });
             fetch(REGISTRATION_URL, {
                 method: "POST",
                 body: JSON.stringify(authBody),
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
-            }})
-            .then((response) => response.json())
-            .then(json => {
-                console.log(json);
-                if (json.error) {
-                    console.log("Error: " + json.error);
-                    setFeedback("Error: " + json.error);
-                } else {
-                    page["email"] = true;
-                    pageUpdate({...page, "email": true});
-                } 
+                }
             })
-            .catch((error) => {
-                console.log("Error: " + error);
-                setFeedback("Error: " + error);
-            })
-            .finally(() => {
-                pageUpdate({...page, "loading": false});
-            });
+                .then((response) => response.json())
+                .then(json => {
+                    console.log(json);
+                    if (json.error) {
+                        console.log("Error: " + json.error);
+                        setFeedback("Error: " + json.error);
+                    } else {
+                        page["email"] = true;
+                        pageUpdate({ ...page, "email": true });
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error: " + error);
+                    setFeedback("Error: " + error);
+                })
+                .finally(() => {
+                    pageUpdate({ ...page, "loading": false });
+                });
         } else {
             console.log("Email is null");
         }
-        
+
     }
 
     return (
         <>
-            {page["username"] && !page["email"] && !page["loading"] && (
+            {page["username"] !== "" && !page["email"] && !page["loading"] && (
                 <>
-                    <h1 className="registrationTitle">Verify Email</h1>
-                    <input className="invisibleInput" ref={emailInput} type="text" placeholder="Email" style={{position: "relative", paddingTop: "10%"}}/>
-                    <text className="feedbackText" style={{color: redText}}>{feedback}</text>
-                    <Button className="defaultSubmitBtn" onClick={handleClick}>Submit</Button>
+                    <h1 className={styles.registrationTitle}>Verify Email</h1>
+                    <input className={styles.invisibleInput} ref={emailInput} type="text" placeholder="Email" />
+                    <text className={styles.feedbackText} style={{ color: redText }}>{feedback}</text>
+                    <Button className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
                 </>
             )}
         </>

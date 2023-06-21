@@ -1003,7 +1003,7 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  68216: ($0, $1) => { var cryptoObj = window.crypto || window.msCrypto; let randArray = new Uint8Array($1); if (cryptoObj && cryptoObj.getRandomValues) { cryptoObj.getRandomValues(randArray); console.log("RandArray: " + randArray + "\n"); } else { throw new Error("Your browser does not support WebCrypto!"); } for (var i = 0; i < randArray.length; i++) { Module.HEAPU8[$0 + i] = randArray[i]; } }
+  68200: ($0, $1) => { var cryptoObj = window.crypto || window.msCrypto; let randArray = new Uint8Array($1); if (cryptoObj && cryptoObj.getRandomValues) { cryptoObj.getRandomValues(randArray); console.log("RandArray: " + randArray + "\n"); } else { throw new Error("Your browser does not support WebCrypto!"); } for (var i = 0; i < randArray.length; i++) { Module.HEAPU8[$0 + i] = randArray[i]; } }
 };
 
 

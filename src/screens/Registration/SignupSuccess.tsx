@@ -1,5 +1,6 @@
 import { Button } from "react-bootstrap";
 import RegistrationProps from "./Interfaces/RegistrationProps";
+import styles from "./commonStyles.module.css";
 
 interface Props {
     page: RegistrationProps;
@@ -19,9 +20,9 @@ const SignupSuccess = ({ page, isRegistering, setIsRegistering, isSettingUpProfi
     return (
         <>
             {page["password"] && isRegistering && !isSettingUpProfile && !page["loading"] &&
-                <div>
-                    <h3>Successfully signed up!</h3>
-                    <Button variant="primary" onClick={handleClick}>Next: Set Up</Button>
+                <div style={{ textAlign: "center" }}>
+                    <h3 style={{ position: "relative", top: "75%", fontSize: "200%" }}>Successfully signed up!</h3>
+                    <Button variant="primary" className={styles.defaultSubmitBtn} style={{ top: "80%", width: "70%", height: "12.5%" }} onClick={handleClick}>Next: Set Up</Button>
                 </div>}
         </>
     );

@@ -1,0 +1,12 @@
+.passwordBar {
+    position: absolute;
+    top: 30%;
+    height: 20%;
+    width: 80%;
+    border: none;
+    text-align: center;
+    box-shadow: none;
+    outline: none;
+    font-size: 300%;
+    margin-left: 10%;
+}

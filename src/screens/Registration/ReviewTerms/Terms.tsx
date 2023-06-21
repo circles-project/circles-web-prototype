@@ -1,17 +1,19 @@
 import RegistrationParams from "../Interfaces/RegistrationParams";
+import styles from "./ReviewTermsAndPolicy.module.css";
+import { Container } from "react-bootstrap";
 
 interface Props {
     title: string
     termsParams: RegistrationParams["m.login.terms"];
 }
 
-const Terms = ({title, termsParams}: Props) => {
+const Terms = ({ title, termsParams }: Props) => {
     return (
-        <>
+        <Container className={styles.policyDisplay}>
             {title === "terms " + termsParams.policies[1].version && (
                 <a href={termsParams.policies[1].en.url}>Click Here to Review Terms and Conditions</a>
                 // <div className="container">
-                    
+
                 //     <h2 className="fw-bold mb-3">Agreement between User and Circuli</h2>
                 //     <p className="lead fw-normal text-normal mb-4">Welcome to Circuli. The Circuli service (the "Service") is comprised of various Matrix servers&nbsp;operated by FUTO Holdings, Inc ("FUTO") under the circu.li domain and various subdomains, including eu.circu.li. Circuli&nbsp;is offered to you conditioned on your acceptance without modification of the terms, conditions, and notices contained herein (the "Terms"). Your use of the Circuli service constitutes your agreement to all such Terms. Please read these terms carefully, and keep a copy of them for your reference.</p>
                 //     <p className="lead fw-normal text-normal mb-4">Circuli is a Social Networking Service.</p>
@@ -89,10 +91,10 @@ const Terms = ({title, termsParams}: Props) => {
                 //     <hr />
                 //     <p className="lead fw-normal text-normal mb-4">Version 1.0</p>
                 //     <p className="lead fw-normal text-normal mb-4">Effective as of Nov 7, 2022</p>
-                
+
                 // </div>
             )}
-        </>    
+        </Container>
     )
 }
 

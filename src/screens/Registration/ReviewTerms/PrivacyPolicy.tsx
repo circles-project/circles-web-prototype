@@ -1,13 +1,15 @@
 import RegistrationParams from "../Interfaces/RegistrationParams";
+import styles from "./ReviewTermsAndPolicy.module.css"
+import { Container } from "react-bootstrap";
 
 interface Props {
     title: string;
     termsParams: RegistrationParams["m.login.terms"];
 }
 
-const PrivacyPolicy = ({title, termsParams}: Props) => {
+const PrivacyPolicy = ({ title, termsParams }: Props) => {
     return (
-        <>
+        <Container className={styles.policyDisplay}>
 
             {title === termsParams.policies[0].name + " " + termsParams.policies[0].version && (
                 <a href={termsParams.policies[0].en.url}>Click Here to Review Privacy Policy</a>
@@ -105,7 +107,7 @@ const PrivacyPolicy = ({title, termsParams}: Props) => {
                     <p className="lead fw-normal text-normal mb-4">Effective as of Nov 7, 2022</p>
                 </div>
             )*/}
-        </>
+        </Container>
     );
 }
 export default PrivacyPolicy;

@@ -1,10 +1,11 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { SERVER } from '../Registration/RegistrationConstants'
 import RegistrationResponse from '../Registration/Interfaces/RegistrationResponse'
-import { createRoom, getRoomState } from './apiClient'
+import { createRoom, getDisplayName, getRoomState } from './apiClient'
 import ProfileSetupStages from './ProfileSetupStages'
 import { Container, Row, Image, Button, Col } from 'react-bootstrap'
+import { BsImageFill } from 'react-icons/bs'
+import './ProfileSetup.css'
 
 interface Props {
     page: ProfileSetupStages
@@ -16,8 +17,9 @@ const SetupCircles = ({ page, pageUpdate, regResponse }: Props) => {
 
     const [avatarFiles, setAvatarFiles] = useState<File[]>([]);
     const [avatarURLS, setAvatarURLS] = useState<string[]>([]);
+    const [displayName, setDisplayName] = useState<string>("");
+    getDisplayName(regResponse).then((displayName) => setDisplayName(displayName));
 
-    // TODO: Check if these functions work as intended in environment
     useEffect(() => {
         if (avatarFiles.length < 1) return;
         const newAvatarURLS = [];
@@ -50,74 +52,85 @@ const SetupCircles = ({ page, pageUpdate, regResponse }: Props) => {
         // Creating sub-space rooms
         await createRoom("Photos", "", "", [], "org.futo.social.gallery", "org.futo.space.gallery", photosRoomId, powerLevelsRooms, "private", regResponse);
 
+        // TODO: m.space is currently the only type supported, add back org.futo.social.timeline?
         const familySpaceId = await createRoom("Family", "", avatarURLS[0], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Family", "", avatarURLS[0], [], "org.futo.social.timeline", "org.futo.social.timeline", familySpaceId, powerLevelsRooms, "invite", regResponse);
+        await createRoom("Family", "", avatarURLS[0], [], "", "org.futo.social.timeline", familySpaceId, powerLevelsRooms, "invite", regResponse);
 
         const friendsSpaceId = await createRoom("Friends", "", avatarURLS[1], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Friends", "", avatarURLS[1], [], "org.futo.social.timeline", "org.futo.space.timeline", friendsSpaceId, powerLevelsRooms, "invite", regResponse);
+        await createRoom("Friends", "", avatarURLS[1], [], "", "org.futo.social.timeline", friendsSpaceId, powerLevelsRooms, "invite", regResponse);
 
         const communitySpaceId = await createRoom("Community", "", avatarURLS[2], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Community", "", avatarURLS[2], [], "org.futo.social.timeline", "org.futo.space.timeline", communitySpaceId, powerLevelsRooms, "invite", regResponse);
+        await createRoom("Community", "", avatarURLS[2], [], "", "org.futo.social.timeline", communitySpaceId, powerLevelsRooms, "invite", regResponse);
 
-        // TODO: Add back "roomSetup" : true when done testing/fixing css
-        pageUpdate({ ...page, "loading": false });
+        pageUpdate({ ...page, "roomSetup": true, "loading": false });
         getRoomState(circlesRoomId, regResponse);
     };
 
     return (
-        <>
-            {!page["loading"] && page["avatar"] && page["roomSetup"] && (
-                <>
-                    <h2 style={{ textAlign: "center" }}>Set up your circles</h2>
-                    <Container>
-                        <Row className='justify-content-md-center'>
-                            <Col xs={6}>
-                                <Image src={avatarURLS[0]} className="img-fluid" alt="Family Circles Picture" roundedCircle />
-                                <input type="file" placeholder="Change" onChange={(event) => onImageChange(event, 0)} />
-                            </Col>
-                            <Col>
-                                <h2>Family</h2>
-                                {/* TODO: Ask if it's the username or group owner */}
-                                <p>{"Username Here"}</p>
-                            </Col>
-                        </Row>
-                        <Row className='justify-content-md-center'>
-                            <Col>
-                                <Image
-                                    src={avatarURLS[1]}
-                                    className="img-fluid"
-                                    alt="Friends Circles Picture"
-                                    roundedCircle
-                                />
-                                <input type="file" placeholder="Change" onChange={(event) => onImageChange(event, 1)} />
-                            </Col>
-                            <Col>
-                                <h2>Friends</h2>
-                                <p>{"Username Here"}</p>
-                            </Col>
-                        </Row>
-                        <Row className='justify-content-md-center'>
-                            <Col>
-                                <Image
-                                    src={avatarURLS[2]}
-                                    className="img-fluid"
-                                    alt="Community Circles Picture"
-                                    roundedCircle
-                                />
-                                <input type="file" placeholder="Change" onChange={(event) => onImageChange(event, 2)} />
-                            </Col>
-                            <Col>
-                                <h2>Community</h2>
-                                <p>{"Username Here"}</p>
-                            </Col>
-                        </Row>
-                    </Container>
-                    <Button variant="primary" onClick={createHierarcy}>
-                        Next: Set Up
-                    </Button>
-                </>
-            )}
-        </>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "0vh" }}>
+            <Container style={{ marginTop: "-85%", verticalAlign: "center" }}>
+                {!page["loading"] && page["avatar"] && !page["roomSetup"] && (
+                    <>
+                        <h2 style={{ textAlign: "center", paddingBottom: "25px" }} className="separator">Set up your circles</h2>
+                        <Container style={{ textAlign: "center" }}>
+                            <Row className="separator circleRow">
+                                <Col>
+                                    {
+                                        avatarURLS[0] ? (
+                                            <Image src={avatarURLS[0]} className="img-fluid circlesPics" alt="Family Circles Picture" roundedCircle />
+                                        ) : (
+                                            <BsImageFill size={80} className="img-fluid" alt="Family Circles Picture" roundedCircle />
+                                        )
+                                    }
+                                    <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 0)} />
+                                </Col>
+                                <Col style={{}}>
+                                    <h2 className="fs-2" >Family</h2>
+                                    <p>{displayName}</p>
+                                </Col>
+                            </Row>
+                            <Row className="separator circleRow">
+                                <Col >
+                                    {
+                                        avatarURLS[1] ? (
+                                            <Image src={avatarURLS[1]} className="img-fluid circlesPics" alt="Friends Circles Picture" roundedCircle />
+                                        ) : (
+                                            <BsImageFill size={80} className="img-fluid" alt="Friends Circles Picture" roundedCircle />
+                                        )
+                                    }
+                                    <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 1)} />
+                                </Col>
+                                <Col>
+                                    <h2 className="fs-2">Friends</h2>
+                                    <p>{displayName}</p>
+                                </Col>
+                            </Row>
+                            <Row className="separator circleRow">
+                                <Col >
+                                    {
+                                        avatarURLS[2] ? (
+                                            <Image src={avatarURLS[2]} className="img-fluid circlesPics" alt="Community Circles Picture" roundedCircle />
+                                        ) : (
+                                            <BsImageFill size={80} className="img-fluid" alt="Community Circles Picture" roundedCircle />
+                                        )
+                                    }
+                                    <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 2)} />
+                                </Col>
+                                <Col>
+                                    <h2 className="fs-2">Community</h2>
+                                    <p>{displayName}</p>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <div className="d-flex justify-content-center">
+                            <Button variant="primary" size='lg' style={{ width: "80%", marginTop: "5%" }} onClick={createHierarcy}>
+                                Next
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </Container>
+        </div>
     );
 
 }

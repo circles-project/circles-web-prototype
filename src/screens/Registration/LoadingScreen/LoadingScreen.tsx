@@ -12,11 +12,10 @@ const SetPassphrase = ({ page }: Props) => {
     return (
         <>
             {page["loading"] && (
-                <>
+                <div style={{ textAlign: "center" }}>
                     <h1 className={styles.loadingText}>Loading</h1>
-                    {/* TODO: Add loading animation and logic for checking once password registered*/}
                     <Circles className={styles.spinnerIcon} stroke="#000000" fill="#000000" />
-                </>
+                </div>
             )}
         </>
     );
