@@ -45,9 +45,6 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                 const encodedP = fromByteArray(PArray);
                 const encodedV = fromByteArray(VArray);
 
-                console.log("Base64 encoded P: ", encodedP);
-                console.log("Base64 encodedV: ", encodedV);
-
                 // Bsspeke .save request
                 let authBody2 = {
                     "auth": {
@@ -59,7 +56,6 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                     }
                 }
                 pageUpdate({ ...page, "loading": true });
-                console.log(authBody2);
                 saveRequest(authBody2, page, pageUpdate, setFeedback, setRegistrationResponse);
             }
         })

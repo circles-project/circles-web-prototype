@@ -3,11 +3,10 @@ import { SERVER, DOMAIN } from '../Registration/RegistrationConstants.ts';
 import ProfileSetupStages from './ProfileSetupStages.ts';
 
 //TODO: Check type of joinRules and powerLevels
-export function createRoom(roomName: string, topic: string, icon_uri: string, invite_ids: string[], roomType: string, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
+export async function createRoom(roomName: string, topic: string, avatarFile: File | null, invite_ids: string[] | null, room_type: string | null, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
     const CREATE_URL = SERVER + '/_matrix/client/v3/createRoom';
-
-    return new Promise((resolve, reject) => {
-        fetch(CREATE_URL, {
+    try {
+        const response = await fetch(CREATE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -16,87 +15,119 @@ export function createRoom(roomName: string, topic: string, icon_uri: string, in
             },
             body: JSON.stringify({
                 "creation_content": {
-                    "room_type": roomType,
+                    "type": room_type,
                 },
-                "initial_state": [
-                    { "type": "m.room.join_rules", "state_key": "", "content": { "join_rule": joinRule } }
-                ],
                 "name": roomName,
                 "topic": topic,
+                "preset": "private_chat",
+                "visibility": "private",
                 "power_level_content_override": powerLevels,
             })
+        });
+
+        const data = await response.json();
+        console.log("Room Created: ", data);
+
+        await setTags(regRes?.user_id, data.room_id, roomTag, regRes);
+
+        if (avatarFile) {
+            await setGroupAvatar(avatarFile, data.room_id, regRes);
+        }
+        if (parentId) {
+            await establishParentChildRelationship(parentId, data.room_id, regRes);
+        }
+
+        getRoomState(data.room_id, regRes);
+        return data.room_id; // Resolve the promise with the room ID
+    } catch (error) {
+        console.error('Error:', error);
+        throw error; // Reject the promise with the error
+    }
+}
+
+// Add tags to a room
+async function setTags(userId: string | undefined, roomId: string, tag: string, regRes: RegistrationResponse | null): Promise<void> {
+    const TAGS_URL = SERVER + '/_matrix/client/v3/user/' + userId + '/rooms/' + roomId + '/tags/' + tag;
+    try {
+        const response = await fetch(TAGS_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': `Bearer ${regRes?.access_token}`
+            },
+            body: JSON.stringify({
+                "order": 0
+            })
+        });
+
+        await getTags(userId, roomId, tag, regRes);
+        return;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+// Get tags of a room
+async function getTags(userId: string | undefined, roomid: string, tag: string, regRes: RegistrationResponse | null) {
+
+    return new Promise((resolve, reject) => {
+        fetch(SERVER + '/_matrix/client/v3/user/' + userId + '/rooms/' + roomid + '/tags/' + tag, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': `Bearer ${regRes?.access_token}`
+            },
         })
             .then(response => response.json())
-            .then(data => {
-                console.log("Room Created: ", data);
-                setTags(regRes?.user_id, data.room_id, roomTag, regRes);
-                if (icon_uri !== "") {
-                    setGroupAvatar(icon_uri, data.room_id, regRes);
-                }
-                if (parentId !== "") {
-                    establishParentChildRelationship(parentId, data.room_id, regRes);
-                }
-                resolve(data.room_id); // Resolve the promise with the room ID
-            })
+            .then(response => {
+                resolve(response);
+            }
+            )
             .catch((error) => {
                 console.error('Error:', error);
-                reject(error); // Reject the promise with the error
+                reject(error);
             });
     });
 }
 
-// Add tags to a room
-function setTags(userId: string | undefined, roomId: string, tag: string, regRes: RegistrationResponse | null) {
-    const TAGS_URL = SERVER + '/_matrix/client/v3/user/' + userId + '/rooms/' + roomId + '/tags/' + tag;
-    fetch(TAGS_URL, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-            'Authorization': `Bearer ${regRes?.access_token}`
-        },
-        body: JSON.stringify({
-            // TODO: Check if order is needed
-            "order": .25
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Tags Added: ", data);
-
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-}
-
 // Set the avatar of a room
-function setGroupAvatar(avatarURL: string, roomId: string, regRes: RegistrationResponse | null) {
+async function setGroupAvatar(avatarFile: File, roomId: string, regRes: RegistrationResponse | null): Promise<string> {
+    const mxcURL = await generateMxcUri(regRes);
+    const mxcFile = await uploadToMxc(avatarFile, mxcURL, regRes);
+
     const AVATAR_URL = SERVER + '/_matrix/client/r0/rooms/' + roomId + '/state/m.room.avatar';
-
-    fetch(AVATAR_URL, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-            'Authorization': `Bearer ${regRes?.access_token}`
-        },
-        body: JSON.stringify({
-            "info": {
-                "h": 100,
-                "w": 100,
+    return new Promise((resolve, reject) => {
+        fetch(AVATAR_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': `Bearer ${regRes?.access_token}`
             },
-            "url": avatarURL
+            body: JSON.stringify({
+                // TODO: Change info?
+                "info": {
+                    "h": 398,
+                    "mimetype": "image/jpeg",
+                    "size": 31037,
+                    "w": 394
+                },
+                "url": mxcFile
+            })
         })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Avatar Set: ", data);
-
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(response => {
+                resolve(response.event_id);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
 }
 
 // Get the state of a room - testing purposes
@@ -120,86 +151,93 @@ export function getRoomState(roomid: string, regRes: RegistrationResponse | null
 }
 
 // Establish parent/child relationship between two rooms
-function establishParentChildRelationship(parentId: string, childId: string, regRes: RegistrationResponse | null) {
+async function establishParentChildRelationship(parentId: string, childId: string, regRes: RegistrationResponse | null): Promise<void> {
 
     // m.space.parent is event in child room - state_key is parent room's id
     // m.space.child is event in parent room - state_key is child room's id
-    const CHILD_ROOM_URL = SERVER + '/_matrix/client/v3/rooms/' + childId + '/state/m.room.child/' + parentId;
-    const PARENT_ROOM_URL = SERVER + '/_matrix/client/v3/rooms/' + parentId + '/state/m.room.parent/' + childId;
+    const CHILD_EVENT_URL = SERVER + '/_matrix/client/v3/rooms/' + parentId + '/state/m.space.child/' + childId;
+    const PARENT_EVENT_URL = SERVER + '/_matrix/client/v3/rooms/' + childId + '/state/m.space.parent/' + parentId;
 
     // TODO: Ask about child room ordering
-    // Adding m.space.parent event to child room
-    fetch(CHILD_ROOM_URL, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-            'Authorization': `Bearer ${regRes?.access_token}`,
-        },
-        body: JSON.stringify({
-            "via": [
-                DOMAIN
-            ]
+    // Adding m.space.child event to child room
+    return new Promise((resolve, reject) => {
+        fetch(CHILD_EVENT_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': `Bearer ${regRes?.access_token}`,
+            },
+            body: JSON.stringify({
+                "via": [
+                    DOMAIN
+                ]
+            })
         })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Child/Parent Relationship Established: ", data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
 
-    // Adding m.space.child event to parent room
-    fetch(PARENT_ROOM_URL, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-            'Authorization': `Bearer ${regRes?.access_token}`,
-        },
-        body: JSON.stringify({
-            "via": [
-                DOMAIN
-            ]
-        })
-    })
-        .then(response => response.json())
-        .then(response => {
-            console.log("Child/Parent Relationship Established: ", response);
-        }
-        )
-        .catch((error) => {
-            console.log('Error:', error);
-        });
-
+                // Adding m.space.parent event to parent room
+                fetch(PARENT_EVENT_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${regRes?.access_token}`,
+                    },
+                    body: JSON.stringify({
+                        "via": [
+                            DOMAIN
+                        ]
+                    })
+                })
+                    .then(response => response.json())
+                    .then(response => {
+                        resolve();
+                    })
+                    .catch((error) => {
+                        console.log('Error:', error);
+                        reject(error);
+                    });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
 }
 
 // Sets the users profile avatar
-export async function setProfileAvatar(avatarFile: File | null, regResponse: RegistrationResponse | null) {
+export async function setProfileAvatar(avatarFile: File | null, regResponse: RegistrationResponse | null): Promise<void> {
     const AVATAR_URL_PATH = SERVER + '/_matrix/client/v3/profile/' + regResponse?.user_id + '/avatar_url';
-    const mxcFile = await generateMxcUri(avatarFile, regResponse);
+    const mxcURI = await generateMxcUri(regResponse);
+    const mxcFile = await uploadToMxc(avatarFile, mxcURI, regResponse);
 
-    fetch(AVATAR_URL_PATH, {
-        method: "PUT",
-        body: JSON.stringify({
-            "avatar_url": mxcFile,
-        }),
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${regResponse?.access_token}`
-        }
+    // const mxcFile = await generateMxcFile(avatarFile, regResponse);
+    return new Promise((resolve, reject) => {
+        fetch(AVATAR_URL_PATH, {
+            method: "PUT",
+            body: JSON.stringify({
+                "avatar_url": mxcFile,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${regResponse?.access_token}`
+            }
 
-    })
-        .then((response) => response.json())
-        .then(json => {
-            console.log("Profile Avatar Set: ", json)
-            getProfileAvatar(regResponse);
         })
-        .catch((error) => {
-            console.log("Error: " + error);
-        });
+            .then((response) => response.json())
+            .then(json => {
+                getProfileAvatar(regResponse);
+                resolve();
+            })
+            .catch((error) => {
+                console.log("Error: " + error);
+                reject(error);
+            });
+    });
+
 }
 
 // Gets the users profile avatar
@@ -248,7 +286,7 @@ export function getDisplayName(regResponse: RegistrationResponse | null): Promis
 // Sets the users display name
 export function setDisplayName(displayName: string, regResponse: RegistrationResponse | null, pageUpdate: Function, page: ProfileSetupStages) {
     const DISPLAY_NAME_URL = SERVER + '/_matrix/client/v3/profile/' + regResponse?.user_id + '/displayname';
-
+    pageUpdate({ ...page, "loading": true });
     fetch(DISPLAY_NAME_URL, {
         method: "PUT",
         body: JSON.stringify({
@@ -263,7 +301,6 @@ export function setDisplayName(displayName: string, regResponse: RegistrationRes
         .then((response) => response.json())
         .then(json => {
             console.log("Display Name Set: ", json);
-            // TODO: Uncomment, testing changing avatar photo
             pageUpdate({ ...page, "avatar": true });
         })
         .catch((error) => {
@@ -271,27 +308,125 @@ export function setDisplayName(displayName: string, regResponse: RegistrationRes
         });
 }
 
-export function generateMxcUri(file: File | null, regResponse: RegistrationResponse | null): Promise<string> {
+// Generates an Mxc URI to be able to upload a file to
+export function generateMxcUri(regResponse: RegistrationResponse | null): Promise<string> {
     return new Promise((resolve, reject) => {
-        const formData = new FormData();
-        formData.append("file", file as Blob);
-
-        fetch(SERVER + '/_matrix/media/v3/upload', {
+        fetch(SERVER + `/_matrix/media/v3/upload`, {
             method: "POST",
-            body: formData,
             headers: {
+                "Content-Type": "image/jpeg",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${regResponse?.access_token}`,
+            },
+            body: JSON.stringify({
+                "filename": "avatar",
+            }) // Empty body  
+        })
+            .then((response) => response.json())
+            .then(json => {
+                resolve(json.content_uri);
+
+            })
+            .catch((error) => {
+                console.log("Error: " + error);
+                reject(error);
+            });
+    });
+}
+
+// Uploads a file to the provided Mxc URI
+export function uploadToMxc(file: File | null, mxcURI: string, regResponse: RegistrationResponse | null): Promise<string> {
+    const mediaID = mxcURI.split("/").pop();
+    const serverName = mxcURI.split("/")[2];
+
+    return new Promise((resolve, reject) => {
+        fetch(SERVER + '/_matrix/media/v3/upload/' + serverName + '/' + mediaID, {
+            method: "POST",
+            body: file,
+            headers: {
+                "Content-Type": "image/jpeg",
                 "Authorization": `Bearer ${regResponse?.access_token}`
             }
         })
             .then((response) => response.json())
             .then(json => {
-                console.log("Mxc URI: ", json);
                 resolve(json.content_uri);
             })
             .catch((error) => {
                 console.log("Error: " + error);
-                reject("Error");
+                reject(error);
             });
     });
+}
+
+// Checks the account data for the user; used for debugging - need to uncomment calls in SetupCircles.tsx and fix setAccountData function
+export function checkSetup(regResponse: RegistrationResponse | null) {
+    const DEBUG_URL = SERVER + '/_matrix/client/v3/user/' + regResponse?.user_id + '/account_data/org.futo.circles.config';
+    fetch(DEBUG_URL, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${regResponse?.access_token}`
+        }
+    })
+
+        .then((response) => response.json())
+        .then(json => {
+            console.log("Debug: ", json);
+        }
+        )
+        .catch((error) => {
+            console.log("Error: " + error);
+        }
+        );
+}
+
+// TODO: Function not working as intended, adding only most recent
+// Set the account data for the user and adds it to org.futo.circles.config
+export function setAccountData(roomType: string, roomID: string, regResponse: RegistrationResponse | null) {
+    const ACCOUNT_DATA_URL = SERVER + '/_matrix/client/v3/user/' + regResponse?.user_id + "/account_data/org.futo.circles.config";
+    fetch(ACCOUNT_DATA_URL, {
+        method: "PUT",
+        body: JSON.stringify({
+            [roomType]: roomID,
+        }),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${regResponse?.access_token}`
+        }
+    })
+        .then((response) => response.json())
+        .then(json => {
+            console.log("Account Data Set: ", json);
+        }
+        )
+        .catch((error) => {
+            console.log("Error: " + error);
+        }
+        );
+}
+
+// Get the room hierarchy data for a given room
+export function getRoomHierarchy(roomId: string, regResponse: RegistrationResponse | null) {
+    const HIERARCHY_URL = SERVER + "/_matrix/client/v1/rooms/" + roomId + "/hierarchy";
+    fetch(HIERARCHY_URL, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${regResponse?.access_token}`
+        }
+    })
+        .then((response) => response.json())
+        .then(json => {
+            console.log("Hierarchy: ", json);
+        }
+        )
+        .catch((error) => {
+            console.log("Error: " + error);
+        }
+        );
 }
 

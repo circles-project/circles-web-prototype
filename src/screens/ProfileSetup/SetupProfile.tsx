@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import RegistrationResponse from "../Registration/Interfaces/RegistrationResponse.tsx";
-import { setDisplayName, setProfileAvatar, generateMxcUri } from "./apiClient.ts";
+import { setDisplayName, setProfileAvatar } from "./apiClient.ts";
 import ProfileSetupStages from "./ProfileSetupStages.tsx";
 import { Container, Image } from "react-bootstrap";
 import { BsPersonSquare } from "react-icons/bs";
@@ -35,8 +35,6 @@ const SetupProfile = ({ page, pageUpdate, regResponse }: Props) => {
 
             // Submitting display name and avatar to server
             setProfileAvatar(avatarFile, regResponse);
-            console.log("Avatar file: " + avatarFile);
-            console.log("Avatar URL: " + avatarURL);
             setDisplayName(name.current.value, regResponse, pageUpdate, page);
 
         } else {

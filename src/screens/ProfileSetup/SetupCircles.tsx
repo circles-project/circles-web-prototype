@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import RegistrationResponse from '../Registration/Interfaces/RegistrationResponse'
-import { createRoom, getDisplayName, getRoomState } from './apiClient'
+import { createRoom, getDisplayName } from './apiClient'
 import ProfileSetupStages from './ProfileSetupStages'
 import { Container, Row, Image, Button, Col } from 'react-bootstrap'
 import { BsImageFill } from 'react-icons/bs'
@@ -44,26 +44,32 @@ const SetupCircles = ({ page, pageUpdate, regResponse }: Props) => {
             "invite": 50,
         };
 
-        const rootRoomId = await createRoom("Circles", "", "", [], "m.space", "org.futo.space.root", "", powerLevelsSpace, "private", regResponse);
-        const circlesRoomId = await createRoom("My Circles", "", "", [], "m.space", "org.futo.space.circles", rootRoomId, powerLevelsSpace, "private", regResponse);
-        const groupRoomId = await createRoom("My Groups", "", "", [], "m.space", "org.futo.space.groups", rootRoomId, powerLevelsSpace, "private", regResponse);
-        const photosRoomId = await createRoom("My Photo Galleries", "", "", [], "m.space", "org.futo.space.photos", rootRoomId, powerLevelsSpace, "private", regResponse);
+        const rootRoomId = await createRoom("Circles", "", null, null, "m.space", "org.futo.space.root", "", powerLevelsSpace, "private", regResponse);
+        // setAccountData("root", rootRoomId, regResponse);
+        const circlesRoomId = await createRoom("My Circles", "", null, null, "m.space", "org.futo.space.circles", rootRoomId, powerLevelsSpace, "private", regResponse);
+        // setAccountData("circles", circlesRoomId, regResponse);
+        const groupRoomId = await createRoom("My Groups", "", null, null, "m.space", "org.futo.space.groups", rootRoomId, powerLevelsSpace, "private", regResponse);
+        // setAccountData("groups", groupRoomId, regResponse);
+        const photosRoomId = await createRoom("My Photo Galleries", "", null, null, "m.space", "org.futo.space.photos", rootRoomId, powerLevelsSpace, "private", regResponse);
+        // setAccountData("gallery", photosRoomId, regResponse);
 
         // Creating sub-space rooms
-        await createRoom("Photos", "", "", [], "org.futo.social.gallery", "org.futo.space.gallery", photosRoomId, powerLevelsRooms, "private", regResponse);
+        await createRoom("Photos", "", null, null, "org.futo.social.gallery", "org.futo.space.gallery", photosRoomId, powerLevelsRooms, "private", regResponse);
+        // setAccountData("gallery", photosId, regResponse);
 
-        // TODO: m.space is currently the only type supported, add back org.futo.social.timeline?
-        const familySpaceId = await createRoom("Family", "", avatarURLS[0], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Family", "", avatarURLS[0], [], "", "org.futo.social.timeline", familySpaceId, powerLevelsRooms, "invite", regResponse);
+        const familySpaceId = await createRoom("Family", "", avatarFiles[0], null, "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
+        // setAccountData("circle", familySpaceId, regResponse);
+        await createRoom("Family", "", avatarFiles[0], null, "org.futo.social.timeline", "org.futo.social.timeline", familySpaceId, powerLevelsRooms, "invite", regResponse);
 
-        const friendsSpaceId = await createRoom("Friends", "", avatarURLS[1], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Friends", "", avatarURLS[1], [], "", "org.futo.social.timeline", friendsSpaceId, powerLevelsRooms, "invite", regResponse);
+        const friendsSpaceId = await createRoom("Friends", "", avatarFiles[1], null, "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
+        // setAccountData("circle", friendsSpaceId, regResponse);
+        await createRoom("Friends", "", avatarFiles[1], null, "org.futo.social.timeline", "org.futo.social.timeline", friendsSpaceId, powerLevelsRooms, "invite", regResponse);
 
-        const communitySpaceId = await createRoom("Community", "", avatarURLS[2], [], "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
-        await createRoom("Community", "", avatarURLS[2], [], "", "org.futo.social.timeline", communitySpaceId, powerLevelsRooms, "invite", regResponse);
+        const communitySpaceId = await createRoom("Community", "", avatarFiles[2], null, "m.space", "org.futo.social.circle", circlesRoomId, powerLevelsSpace, "invite", regResponse);
+        // setAccountData("circle", communitySpaceId, regResponse);
+        await createRoom("Community", "", avatarFiles[2], null, "org.futo.social.timeline", "org.futo.social.timeline", communitySpaceId, powerLevelsRooms, "invite", regResponse);
 
         pageUpdate({ ...page, "roomSetup": true, "loading": false });
-        getRoomState(circlesRoomId, regResponse);
     };
 
     return (

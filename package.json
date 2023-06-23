@@ -13,6 +13,8 @@
     "axios": "^1.4.0",
     "base64-js": "^1.5.1",
     "bootstrap": "^5.2.3",
+    "globalthis": "^1.0.3",
+    "matrix-js-sdk": "^26.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
