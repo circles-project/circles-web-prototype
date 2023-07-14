@@ -1,20 +1,15 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import PrivacyPolicy from './PrivacyPolicy';
-import Terms from './Terms';
-import RegistrationProps from '../Interfaces/RegistrationProps';
-import RegistrationParams from '../Interfaces/RegistrationParams';
+import PrivacyPolicy from './PrivacyPolicy.tsx';
+import Terms from './Terms.tsx';
 import '../RegistrationConstants.ts'
 import { REGISTRATION_URL } from '../RegistrationConstants.ts';
 import topStyles from '../commonStyles.module.css'
+import useAuthStore from '../../../state-management/auth/store.ts';
 
-interface Props {
-    page: RegistrationProps
-    pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
-    termsParams: RegistrationParams["m.login.terms"];
-}
-
-const ReviewTerms = ({ page, pageUpdate, termsParams }: Props) => {
+const ReviewTerms = () => {
+    const { stages, registrationParams, setLoading, setTermsAccepted} = useAuthStore();
+    const termsParams = registrationParams["m.login.terms"];
     const [title, setTitle] = useState(termsParams.policies[0].name + " " + termsParams.policies[0].version);
 
 
@@ -26,10 +21,11 @@ const ReviewTerms = ({ page, pageUpdate, termsParams }: Props) => {
             let authBody = {
                 "auth": {
                     "type": "m.login.terms",
-                    "session": page.session_id,
+                    "session": stages.sessionId
                 }
             }
-            pageUpdate({ ...page, "loading": true });
+            // pageUpdate({ ...page, "loading": true });
+            setLoading(true);
             fetch(REGISTRATION_URL, {
                 method: "POST",
                 body: JSON.stringify(authBody),
@@ -42,19 +38,22 @@ const ReviewTerms = ({ page, pageUpdate, termsParams }: Props) => {
                 .then(json => {
                     console.log(json);
 
-                    page["terms-accepted"] = true;
-                    pageUpdate({ ...page, "terms-accepted": true, "loading": false });
+                    // page["terms-accepted"] = true;
+                    // pageUpdate({ ...page, "terms-accepted": true, "loading": false });
+                    setTermsAccepted(true);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log("Error: " + error);
-                    pageUpdate({ ...page, "loading": false });
+                    // pageUpdate({ ...page, "loading": false });
+                    setLoading(false);
                 });
         }
     }
 
     return (
         <>
-            {!page["terms-accepted"] && !page["loading"] && (
+            {!stages.termsAccepted && !stages.loading && (
                 <>
                     <h1 className={topStyles.registrationTitle}>Review {title}</h1>
 

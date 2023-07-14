@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import RegistrationResponse from "../Registration/Interfaces/RegistrationResponse.tsx";
-import { setDisplayName, setProfileAvatar } from "./apiClient.ts";
-import ProfileSetupStages from "./ProfileSetupStages.tsx";
+import { setDisplayName, setProfileAvatar } from "./apiCalls.ts";
+import ProfileSetupStages from "./ProfileSetupStages.ts";
 import { Container, Image } from "react-bootstrap";
 import { BsPersonSquare } from "react-icons/bs";
+import useAuthStore from "../../state-management/auth/store.ts";
 
 interface Props {
     page: ProfileSetupStages;
     pageUpdate: React.Dispatch<React.SetStateAction<ProfileSetupStages>>;
-    regResponse: RegistrationResponse | null;
+    // regResponse: RegistrationResponse | null;
 }
 
-const SetupProfile = ({ page, pageUpdate, regResponse }: Props) => {
+const SetupProfile = ({ page, pageUpdate }: Props) => {
+    const { registrationResponse } = useAuthStore();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarURL, setAvatarURL] = useState<string | null>(null); // Change the type to string or null
     const name = useRef<HTMLInputElement>(null);
@@ -34,8 +35,8 @@ const SetupProfile = ({ page, pageUpdate, regResponse }: Props) => {
             console.log("Name: " + name.current.value);
 
             // Submitting display name and avatar to server
-            setProfileAvatar(avatarFile, regResponse);
-            setDisplayName(name.current.value, regResponse, pageUpdate, page);
+            setProfileAvatar(avatarFile, registrationResponse);
+            setDisplayName(name.current.value, registrationResponse, pageUpdate, page);
 
         } else {
             console.log("Name is null");

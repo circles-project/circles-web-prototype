@@ -1,23 +1,15 @@
-import React, { useRef, useState } from "react";
-import RegistrationProps from "../Interfaces/RegistrationProps.tsx";
+import { useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 import styles from "../commonStyles.module.css";
 import passStyles from "./SetPassphrase.module.css";
 import PasswordStrengthBar from "react-password-strength-bar";
-import RegistrationParams from "../Interfaces/RegistrationParams.ts";
 import Client from "../bsspeke/BSSpekeWrapper.js";
-import { DOMAIN } from '../RegistrationConstants.ts'
-import RegistrationResponse from "../Interfaces/RegistrationResponse.js";
+import { DOMAIN } from '../RegistrationConstants.ts';
 import { oprfRequest } from "../bsspeke/apiClient.ts";
+import useAuthStore from "../../../state-management/auth/store.ts";
 
-interface Props {
-    page: RegistrationProps;
-    pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
-    setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"];
-    setRegistrationResponse: React.Dispatch<React.SetStateAction<RegistrationResponse | null>>;
-}
-
-const SetPassphrase = ({ page, pageUpdate, setPasswordParams, setRegistrationResponse }: Props) => {
+const SetPassphrase = () => {
+    const { stages, registrationParams, setLoading, setPassword, setRegistrationResponse} = useAuthStore();
 
     const [passwordInput, setPasswordInput] = useState<string>("");
     const confirmPasswordInput = useRef<HTMLInputElement>(null);
@@ -26,7 +18,6 @@ const SetPassphrase = ({ page, pageUpdate, setPasswordParams, setRegistrationRes
 
     const handleClick = () => {
 
-        console.log(confirmPasswordInput.current);
         if (passwordInput !== "") {
             const confirmPasswordValue = confirmPasswordInput.current?.value;
             console.log(confirmPasswordValue);
@@ -36,13 +27,12 @@ const SetPassphrase = ({ page, pageUpdate, setPasswordParams, setRegistrationRes
                 return;
             }
 
-            const user_id = "@" + page["username"] + ":" + DOMAIN;
+            const user_id = "@" + stages.username + ":" + DOMAIN;
             const client = new Client(user_id, DOMAIN, passwordInput);
             
-            // Bsspeke .oprf request also calls .save
-            oprfRequest(client, setPasswordParams, page, pageUpdate, setFeedback, setRegistrationResponse);
+            oprfRequest(client,registrationParams["m.enroll.bsspeke-ecc.oprf"], stages, setLoading, setPassword, setFeedback, setRegistrationResponse);
 
-            pageUpdate({ ...page, "loading": true });
+            setLoading(true);
             
 
         } else {
@@ -53,7 +43,7 @@ const SetPassphrase = ({ page, pageUpdate, setPasswordParams, setRegistrationRes
 
     return (
         <>
-            {page["correctCode"] && !page["password"] && !page["loading"] && (
+            {stages.correctCode && !stages.password && !stages.loading && (
                 <>
                     <h1 className={styles.registrationTitle}>Set Passphrase</h1>
                     <input className={styles.invisibleInput} style={{ top: "20%" }} type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Password" />

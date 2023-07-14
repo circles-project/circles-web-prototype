@@ -1,6 +1,6 @@
-import RegistrationResponse from '../Registration/Interfaces/RegistrationResponse.tsx';
 import { SERVER, DOMAIN } from '../Registration/RegistrationConstants.ts';
 import ProfileSetupStages from './ProfileSetupStages.ts';
+import { RegistrationResponse } from '../../state-management/auth/store.ts';
 
 //TODO: Check type of joinRules and powerLevels
 export async function createRoom(roomName: string, topic: string, avatarFile: File | null, invite_ids: string[] | null, room_type: string | null, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
@@ -259,7 +259,6 @@ function getProfileAvatar(regResponse: RegistrationResponse | null) {
             console.log("Error: " + error);
         });
 }
-
 
 // Get the users display name, returns a promise
 export function getDisplayName(regResponse: RegistrationResponse | null): Promise<string> {

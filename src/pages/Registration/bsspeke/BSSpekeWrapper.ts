@@ -58,26 +58,4 @@ export function decodeUTF8(bytes: Uint8Array): string {
   return utf8Decoder.decode(bytes);
 }
 
-// export function encodeHextoBase64(hexArray: Uint8Array): string {
-
-//   // Convert Uint8 array to hexadecimal string
-
-//   const hexString = Array.prototype.reduce.call(hexArray, (str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-
-//   console.log("Hexstring: ", hexString);
-//   const base64String = btoa(hexString as string);
-
-//   return base64String;
-// }
-
-// export function decodeBase64toHex(base64String: string): string {
-  
-//     const b64Decoded = atob(base64String);
-
-//   return b64Decoded;
-// }
-
-
-
-
 export default Client;

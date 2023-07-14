@@ -23,6 +23,7 @@
     "react-modal": "^3.16.1",
     "react-password-strength-bar": "^0.4.1",
     "utf8": "^3.0.0",
+    "zustand": "^4.3.9",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {

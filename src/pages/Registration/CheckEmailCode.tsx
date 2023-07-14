@@ -1,17 +1,12 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import styles from './commonStyles.module.css';
 import { Button } from "react-bootstrap";
-import RegistrationProps from "./Interfaces/RegistrationProps";
 import { useState } from "react";
 import { REGISTRATION_URL } from "./RegistrationConstants";
+import useAuthStore from "../../state-management/auth/store";
 
-interface Props {
-    page: RegistrationProps;
-    pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
-}
-
-const CheckCode = ({ page, pageUpdate }: Props) => {
-
+const CheckCode = () => {
+    const { stages, setLoading, setCorrectCode } = useAuthStore();
     const codeInput = useRef<HTMLInputElement>(null);
     const [feedback, setFeedback] = useState<string>("Enter the code");
     let redText = feedback === "Enter the code" ? "black" : "red";
@@ -21,12 +16,12 @@ const CheckCode = ({ page, pageUpdate }: Props) => {
         if (codeInput.current !== null) {
             let authBody = {
                 "auth": {
-                    "session": page.session_id,
+                    "session": stages.sessionId,
                     "type": "m.enroll.email.submit_token",
                     "token": codeInput.current.value
                 }
             }
-            pageUpdate({ ...page, "loading": true });
+            setLoading(true);
             fetch(REGISTRATION_URL, {
                 method: "POST",
                 body: JSON.stringify(authBody),
@@ -42,8 +37,7 @@ const CheckCode = ({ page, pageUpdate }: Props) => {
                         console.log("Error: " + json.error);
                         setFeedback("Error: " + json.error);
                     } else {
-                        page["correctCode"] = true;
-                        pageUpdate({ ...page, "correctCode": true });
+                        setCorrectCode(true);
                     }
                 })
                 .catch((error) => {
@@ -51,7 +45,7 @@ const CheckCode = ({ page, pageUpdate }: Props) => {
                     setFeedback("Error: " + error);
                 })
                 .finally(() => {
-                    pageUpdate({ ...page, "loading": false });
+                    setLoading(false);
                     console.log("Code request sent");
                 });
         } else {
@@ -61,7 +55,7 @@ const CheckCode = ({ page, pageUpdate }: Props) => {
     }
     return (
         <>
-            {page["email"] && !page["correctCode"] && !page["loading"] && (
+            {stages.email && !stages.correctCode && !stages.loading && (
                 <>
                     <h2 className={styles.registrationTitle}>Enter the 6 digit code you received in your email</h2>
                     <input className={styles.invisibleInput} ref={codeInput} type="number" placeholder="6 digit code" />

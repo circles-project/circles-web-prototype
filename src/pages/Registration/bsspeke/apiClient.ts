@@ -1,12 +1,13 @@
 import RegistrationParams from "../Interfaces/RegistrationParams";
-import RegistrationProps from "../Interfaces/RegistrationProps";
 import { REGISTRATION_URL } from "../RegistrationConstants";
 import Client from "./BSSpekeWrapper";
 import { fromByteArray, toByteArray } from "base64-js";
+import { AuthStages, RegistrationResponse } from "../../../state-management/auth/store";
+
 
 // Executes m.enroll.bsspeke-ecc.oprf request
-export function oprfRequest(client: Client, setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"], page: RegistrationProps, pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: React.Dispatch<React.SetStateAction<any>>) {
-
+export function oprfRequest(client: Client, setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"], stages: AuthStages, setLoading: (loading: boolean) => void, setPassword: (password: boolean) => void, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: (regResponse: RegistrationResponse) => void) {
+//TODO: Finish up adding parameters to the request from useAuthStore
     const blind = client.generateBlind();
     const blindBase64 = fromByteArray(blind);
 
@@ -15,7 +16,7 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
     let authBody = {
         "auth": {
             "type": "m.enroll.bsspeke-ecc.oprf",
-            "session": page.session_id,
+            "session": stages.sessionId,
             "curve": setPasswordParams.curve,
             "blind": blindBase64,
         }
@@ -39,8 +40,11 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                 console.log(json);
 
                 const decodedSalt = toByteArray(json.params["m.enroll.bsspeke-ecc.save"].blind_salt);
-                page["password"] = true;
-                pageUpdate({ ...page, "password": true, "loading": false });
+                // page["password"] = true;
+                // pageUpdate({ ...page, "password": true, "loading": false });
+                setPassword(true);
+                setLoading(false);
+
                 const { PArray, VArray } = client.generatePAndV(decodedSalt, setPasswordParams["phf_params"]);
                 const encodedP = fromByteArray(PArray);
                 const encodedV = fromByteArray(VArray);
@@ -49,25 +53,27 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                 let authBody2 = {
                     "auth": {
                         "type": "m.enroll.bsspeke-ecc.save",
-                        "session": page.session_id,
+                        "session": stages.sessionId,
                         "P": encodedP,
                         "V": encodedV,
                         "phf_params": setPasswordParams.phf_params,
                     }
                 }
-                pageUpdate({ ...page, "loading": true });
-                saveRequest(authBody2, page, pageUpdate, setFeedback, setRegistrationResponse);
+                // pageUpdate({ ...page, "loading": true });
+                setLoading(true);
+                saveRequest(authBody2, setLoading, setPassword, setFeedback, setRegistrationResponse);
             }
         })
         .catch((error) => {
             console.log(error);
             setFeedback("Error: " + error);
-            pageUpdate({ ...page, "loading": false });
+            // pageUpdate({ ...page, "loading": false });
+            setLoading(false);
         });
 }
 
 // Executes m.enroll.bsspeke-ecc.save request
-function saveRequest(authBody2: any, page: RegistrationProps, pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: React.Dispatch<React.SetStateAction<any>>) {
+function saveRequest(authBody2: any, setLoading: (loading: boolean) => void, setPassword: (password: boolean) => void, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: React.Dispatch<React.SetStateAction<any>>) {
     fetch(REGISTRATION_URL, {
         method: "POST",
         body: JSON.stringify(authBody2),
@@ -84,14 +90,17 @@ function saveRequest(authBody2: any, page: RegistrationProps, pageUpdate: React.
                 setFeedback("Error: " + json.error);
             } else {
                 console.log(json);
-                page["password"] = true;
-                pageUpdate({ ...page, "password": true, "loading": false });
+                // page["password"] = true;
+                // pageUpdate({ ...page, "password": true, "loading": false });
+                setPassword(true);
+                setLoading(false);
                 setRegistrationResponse(json);
             }
         })
         .catch((error) => {
             console.log("Error: ", error);
             setFeedback("Error: " + error);
-            pageUpdate({ ...page, "loading": false });
+            // pageUpdate({ ...page, "loading": false });
+            setLoading(false);
         });
 }

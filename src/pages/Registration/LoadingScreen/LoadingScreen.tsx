@@ -1,17 +1,15 @@
-import RegistrationProps from "../Interfaces/RegistrationProps"
 import { Circles } from "react-loading-icons";
-import styles from "./LoadingScreen.module.css"
-import ProfileSetupStages from "../../ProfileSetup/ProfileSetupStages";
+import styles from "./LoadingScreen.module.css";
 
 interface Props {
-    page: RegistrationProps | ProfileSetupStages;
+    active: boolean;
 }
 
-const SetPassphrase = ({ page }: Props) => {
+const SetPassphrase = ({active}: Props) => {
 
     return (
         <>
-            {page["loading"] && (
+            {active && (
                 <div style={{ textAlign: "center" }}>
                     <h1 className={styles.loadingText}>Loading</h1>
                     <Circles className={styles.spinnerIcon} stroke="#000000" fill="#000000" />

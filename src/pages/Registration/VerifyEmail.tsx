@@ -2,17 +2,12 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import styles from './commonStyles.module.css';
 import { Button } from 'react-bootstrap';
-import RegistrationProps from './Interfaces/RegistrationProps';
 import './RegistrationConstants.ts'
 import { REGISTRATION_URL } from './RegistrationConstants.ts';
+import useAuthStore from '../../state-management/auth/store.ts';
 
-interface Props {
-    page: RegistrationProps;
-    pageUpdate: React.Dispatch<React.SetStateAction<RegistrationProps>>;
-}
-
-const CheckEmailCode = ({ page, pageUpdate }: Props) => {
-
+const CheckEmailCode = () => {
+    const { stages, setLoading, setEmail } = useAuthStore();
     const emailInput = useRef<HTMLInputElement>(null);
     const [feedback, setFeedback] = useState<string>("Enter an email");
     let redText = feedback === "Enter an email" ? "black" : "red";
@@ -23,11 +18,11 @@ const CheckEmailCode = ({ page, pageUpdate }: Props) => {
             let authBody = {
                 "auth": {
                     "type": "m.enroll.email.request_token",
-                    "session": page.session_id,
+                    "session": stages.sessionId,
                     "email": String(emailInput.current.value)
                 }
             }
-            pageUpdate({ ...page, "loading": true });
+            setLoading(true);
             fetch(REGISTRATION_URL, {
                 method: "POST",
                 body: JSON.stringify(authBody),
@@ -43,8 +38,7 @@ const CheckEmailCode = ({ page, pageUpdate }: Props) => {
                         console.log("Error: " + json.error);
                         setFeedback("Error: " + json.error);
                     } else {
-                        page["email"] = true;
-                        pageUpdate({ ...page, "email": true });
+                        setEmail(true);
                     }
                 })
                 .catch((error) => {
@@ -52,7 +46,7 @@ const CheckEmailCode = ({ page, pageUpdate }: Props) => {
                     setFeedback("Error: " + error);
                 })
                 .finally(() => {
-                    pageUpdate({ ...page, "loading": false });
+                    setLoading(false);
                 });
         } else {
             console.log("Email is null");
@@ -62,7 +56,7 @@ const CheckEmailCode = ({ page, pageUpdate }: Props) => {
 
     return (
         <>
-            {page["username"] !== "" && !page["email"] && !page["loading"] && (
+            {stages.username !== "" && !stages.email && !stages.loading && (
                 <>
                     <h1 className={styles.registrationTitle}>Verify Email</h1>
                     <input className={styles.invisibleInput} ref={emailInput} type="text" placeholder="Email" />

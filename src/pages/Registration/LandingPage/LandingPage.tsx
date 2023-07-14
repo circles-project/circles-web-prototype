@@ -1,40 +1,27 @@
-import VerifyEmail from "../VerifyEmail";
+import VerifyEmail from "../VerifyEmail.tsx";
 import ReviewTerms from "../ReviewTerms/ReviewTermsAndPolicy.js";
 import { useState } from "react";
-import ChooseUser from "../ChooseUser";
+import ChooseUser from "../ChooseUser.tsx";
 import ReactModal from 'react-modal';
 import CheckEmailCode from "../CheckEmailCode.js";
 import SetPassphrase from "../SetPassphrase/SetPassphrase.tsx";
-import LoadingScreen from "../LoadingScreen/LoadingScreen";
+import LoadingScreen from "../LoadingScreen/LoadingScreen.tsx";
 import { Button } from "react-bootstrap";
 import styles from "./LandingPage.module.css";
 import { _generate_random_bytes } from "../bsspeke/EmccBsspeke.js";
-import RegistrationParams from "../Interfaces/RegistrationParams.js";
 import '../RegistrationConstants.ts';
 import { REGISTRATION_URL } from "../RegistrationConstants.ts";
 import SetupProfile from "../../ProfileSetup/SetupProfile.tsx";
 import SetupCircles from "../../ProfileSetup/SetupCircles.tsx";
 import SignupSuccess from "../SignupSuccess.tsx";
-import RegistrationResponse from "../Interfaces/RegistrationResponse.js";
 import SetupDone from "../../ProfileSetup/SetupDone.tsx";
+import useAuthStore from "../../../state-management/auth/store.ts";
 
 function LandingPage() {
 
   ReactModal.setAppElement('#root');
 
-  // Stage Variables
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [userStages, setUserStages] = useState({
-    "session_id": 0,
-    "terms-accepted": false,
-    "username": "",
-    "email": false,
-    "correctCode": false,
-    "password": false,
-    "loading": false,
-  });
-  const [registrationParams, setRegistrationParams] = useState<RegistrationParams | null>(null);
-  const [registrationResponse, setRegistrationResponse] = useState<RegistrationResponse | null>(null);
+  const { stages, isRegistering, registrationParams, setSessionId, setIsRegistering, setRegistrationParams, reset } = useAuthStore();
 
   // TODO: Implement login stage?
   // const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -48,15 +35,7 @@ function LandingPage() {
   const handleCancel = () => {
     console.log("Canceling Registration");
     setIsRegistering(false);
-    setUserStages({
-      "session_id": 0,
-      "terms-accepted": false,
-      "username": "",
-      "email": false,
-      "correctCode": false,
-      "password": false,
-      "loading": false,
-    });
+    reset();
   }
 
   const handleClick = () => {
@@ -72,7 +51,7 @@ function LandingPage() {
       .then(json => {
         console.log(json);
         setIsRegistering(true);
-        setUserStages({ ...userStages, "session_id": json.session });
+        setSessionId(json.session);
         setIsRegistering(true);
         setRegistrationParams(json.params);
       })
@@ -95,15 +74,15 @@ function LandingPage() {
       <ReactModal isOpen={isRegistering} style={{ overlay: { position: "absolute", width: "50%", left: "25%" }, content: { display: "grid" }, }}>
         {registrationParams !== null ? (
           <>
-            <ReviewTerms page={userStages} pageUpdate={setUserStages} termsParams={registrationParams["m.login.terms"]} />
-            <ChooseUser page={userStages} pageUpdate={setUserStages} />
-            <VerifyEmail page={userStages} pageUpdate={setUserStages} />
-            <CheckEmailCode page={userStages} pageUpdate={setUserStages} />
-            <SetPassphrase page={userStages} pageUpdate={setUserStages} setPasswordParams={registrationParams["m.enroll.bsspeke-ecc.oprf"]} setRegistrationResponse={setRegistrationResponse} />
-            <SignupSuccess page={userStages} isRegistering={isRegistering} setIsRegistering={setIsRegistering} isSettingUpProfile={isSettingUpProfile} setIsSettingUpProfile={setIsSettingUpProfile} />
+            <ReviewTerms />
+            <ChooseUser />
+            <VerifyEmail />
+            <CheckEmailCode />
+            <SetPassphrase />
+            <SignupSuccess isSettingUpProfile={isSettingUpProfile} setIsSettingUpProfile={setIsSettingUpProfile} />
           </>
         ) : null}
-        <LoadingScreen page={userStages} />
+        <LoadingScreen active={stages.loading}/>
         <button onClick={handleCancel} className={styles.cancelBtn}>
           Cancel
         </button>
@@ -111,9 +90,9 @@ function LandingPage() {
 
       {/* Profile Setup Components */}
       <ReactModal style={{ overlay: { position: "absolute", width: "50%", left: "25%" } }} isOpen={isSettingUpProfile}>
-        <SetupProfile page={profileSetupStages} pageUpdate={setProfileSetupStages} regResponse={registrationResponse} />
-        <SetupCircles page={profileSetupStages} pageUpdate={setProfileSetupStages} regResponse={registrationResponse} />
-        <LoadingScreen page={profileSetupStages} />
+        <SetupProfile page={profileSetupStages} pageUpdate={setProfileSetupStages} />
+        <SetupCircles page={profileSetupStages} pageUpdate={setProfileSetupStages} />
+        <LoadingScreen active={profileSetupStages.loading} />
         <SetupDone page={profileSetupStages} />
       </ReactModal>
     </>
