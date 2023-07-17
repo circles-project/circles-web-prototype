@@ -24,9 +24,10 @@ const SetupCircles = ({ page, pageUpdate}: Props) => {
         if (avatarFiles.length < 1) return;
         const newAvatarURLS = [];
         for (let i = 0; i < avatarFiles.length; i++) {
-            if (avatarFiles[i] === null) continue;
-            console.log(avatarFiles[i]);
-            // TODO: FIX Bug when not changing group avatars in order
+            if (avatarFiles[i] === null || avatarFiles[i] === undefined) {
+                continue;
+            }
+
             newAvatarURLS[i] = URL.createObjectURL(avatarFiles[i]);
         }
         setAvatarURLS(newAvatarURLS);

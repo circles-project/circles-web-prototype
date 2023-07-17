@@ -3,7 +3,7 @@ import ProfileSetupStages from './ProfileSetupStages.ts';
 import { RegistrationResponse } from '../../state-management/auth/store.ts';
 
 //TODO: Check type of joinRules and powerLevels
-export async function createRoom(roomName: string, topic: string, avatarFile: File | null, invite_ids: string[] | null, room_type: string | null, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
+export async function createRoom(roomName: string, topic: string, avatarFile: File | null, invite_ids: string[] | null, roomType: string | null, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
     const CREATE_URL = SERVER + '/_matrix/client/v3/createRoom';
     try {
         const response = await fetch(CREATE_URL, {
@@ -15,7 +15,7 @@ export async function createRoom(roomName: string, topic: string, avatarFile: Fi
             },
             body: JSON.stringify({
                 "creation_content": {
-                    "type": room_type,
+                    "type": roomType,
                 },
                 "name": roomName,
                 "topic": topic,
@@ -29,20 +29,45 @@ export async function createRoom(roomName: string, topic: string, avatarFile: Fi
         console.log("Room Created: ", data);
 
         await setTags(regRes?.user_id, data.room_id, roomTag, regRes);
-
         if (avatarFile) {
             await setGroupAvatar(avatarFile, data.room_id, regRes);
         }
         if (parentId) {
             await establishParentChildRelationship(parentId, data.room_id, regRes);
         }
+        if (roomType === "org.futo.social.group" || roomType === "org.futo.social.gallery" || roomType === "org.futo.social.timeline") {
+            // TODO: Send an m.room.encrption event to the room to add room encryption, maybe also setup a message function
+            await sendEvent(data.room_id, "m.room.encryption", { "algorithm": "m.megolm.v1.aes-sha2", }, regRes, "");
+        }
 
-        getRoomState(data.room_id, regRes);
         return data.room_id; // Resolve the promise with the room ID
     } catch (error) {
         console.error('Error:', error);
         throw error; // Reject the promise with the error
     }
+}
+
+// TODO: Adapt existing room setup to use sendEvent function (simplification puprposes and get rid of other functions)
+// Send events to a room
+export async function sendEvent(roomId: string, eventType: string, content: object, regRes: RegistrationResponse | null, stateKey?: string) {
+    const SEND_EVENT_URL = SERVER + '/_matrix/client/v3/rooms/' + roomId + '/state/' + eventType + '/' + stateKey;
+    fetch(SEND_EVENT_URL, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json',
+            'Authorization': `Bearer ${regRes?.access_token}`
+        },
+        body: JSON.stringify(content)
+    })
+        .then(response => response.json())
+        .then(data => {
+            // console.log("Event Sent: ", data);
+        })
+        .catch((error) => {
+            // console.log('Error:', error);
+        });
+
 }
 
 // Add tags to a room
@@ -158,7 +183,6 @@ async function establishParentChildRelationship(parentId: string, childId: strin
     const CHILD_EVENT_URL = SERVER + '/_matrix/client/v3/rooms/' + parentId + '/state/m.space.child/' + childId;
     const PARENT_EVENT_URL = SERVER + '/_matrix/client/v3/rooms/' + childId + '/state/m.space.parent/' + parentId;
 
-    // TODO: Ask about child room ordering
     // Adding m.space.child event to child room
     return new Promise((resolve, reject) => {
         fetch(CHILD_EVENT_URL, {
@@ -175,7 +199,7 @@ async function establishParentChildRelationship(parentId: string, childId: strin
             })
         })
             .then(response => response.json())
-            .then(data => {
+            .then(() => {
 
                 // Adding m.space.parent event to parent room
                 fetch(PARENT_EVENT_URL, {
@@ -192,7 +216,7 @@ async function establishParentChildRelationship(parentId: string, childId: strin
                     })
                 })
                     .then(response => response.json())
-                    .then(response => {
+                    .then(() => {
                         resolve();
                     })
                     .catch((error) => {
@@ -213,7 +237,6 @@ export async function setProfileAvatar(avatarFile: File | null, regResponse: Reg
     const mxcURI = await generateMxcUri(regResponse);
     const mxcFile = await uploadToMxc(avatarFile, mxcURI, regResponse);
 
-    // const mxcFile = await generateMxcFile(avatarFile, regResponse);
     return new Promise((resolve, reject) => {
         fetch(AVATAR_URL_PATH, {
             method: "PUT",
@@ -228,7 +251,7 @@ export async function setProfileAvatar(avatarFile: File | null, regResponse: Reg
 
         })
             .then((response) => response.json())
-            .then(json => {
+            .then(() => {
                 getProfileAvatar(regResponse);
                 resolve();
             })
@@ -319,7 +342,7 @@ export function generateMxcUri(regResponse: RegistrationResponse | null): Promis
             },
             body: JSON.stringify({
                 "filename": "avatar",
-            }) // Empty body  
+            })  
         })
             .then((response) => response.json())
             .then(json => {
