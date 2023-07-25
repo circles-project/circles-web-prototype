@@ -17,7 +17,7 @@ export interface RegistrationResponse {
     device_id: string;
 }
 
-interface RegistrationParams {
+export interface RegistrationParams {
     "m.enroll.bsspeke-ecc.oprf": {
         curve: string,
         hash_function: string,
@@ -55,7 +55,7 @@ interface RegistrationParams {
 }
 
 interface AuthStore {
-    stages: AuthStages;
+    authStages: AuthStages;
     registrationParams: RegistrationParams;
     registrationResponse: RegistrationResponse;
     isRegistering: boolean;
@@ -72,9 +72,10 @@ interface AuthStore {
     reset: () => void;
 }
 
+// Zustand store to track authentication stages
 const useAuthStore = create<AuthStore>(
     (set) => ({
-        stages: {
+        authStages: {
             sessionId: 0,
             termsAccepted: false,
             username: "",
@@ -86,19 +87,19 @@ const useAuthStore = create<AuthStore>(
         registrationParams: {} as RegistrationParams,
         registrationResponse: {} as RegistrationResponse,
         isRegistering: false,
-        setSessionId: (sessionId: number) => set((state) => ({ stages: { ...state.stages, sessionId: sessionId } })),
-        setTermsAccepted: (termsAccepted: boolean) => set((state) => ({ stages: { ...state.stages, termsAccepted: termsAccepted } })),
-        setUsername: (username: string) => set((state) => ({ stages: { ...state.stages, username: username } })),
-        setEmail: (email: boolean) => set((state) => ({ stages: { ...state.stages, email: email } })),
-        setCorrectCode: (correctCode: boolean) => set((state) => ({ stages: { ...state.stages, correctCode: correctCode } })),
-        setPassword: (password: boolean) => set((state) => ({ stages: { ...state.stages, password: password } })),
-        setLoading: (loading: boolean) => set((state) => ({ stages: { ...state.stages, loading: loading } })),
+        setSessionId: (sessionId: number) => set((state) => ({ authStages: { ...state.authStages, sessionId: sessionId } })),
+        setTermsAccepted: (termsAccepted: boolean) => set((state) => ({ authStages: { ...state.authStages, termsAccepted: termsAccepted } })),
+        setUsername: (username: string) => set((state) => ({ authStages: { ...state.authStages, username: username } })),
+        setEmail: (email: boolean) => set((state) => ({ authStages: { ...state.authStages, email: email } })),
+        setCorrectCode: (correctCode: boolean) => set((state) => ({ authStages: { ...state.authStages, correctCode: correctCode } })),
+        setPassword: (password: boolean) => set((state) => ({ authStages: { ...state.authStages, password: password } })),
+        setLoading: (loading: boolean) => set((state) => ({ authStages: { ...state.authStages, loading: loading } })),
         setRegistrationParams: (regParams: RegistrationParams) => set(() => ({ registrationParams: regParams })),
         setRegistrationResponse: (regResponse: RegistrationResponse) => set(() => ({ registrationResponse: regResponse })),
         setIsRegistering: (isRegistering: boolean) => set(() => ({ isRegistering: isRegistering })),
         reset: () =>
             set(() => ({
-                stages: {
+                authStages: {
                     sessionId: 0,
                     termsAccepted: false,
                     username: "",

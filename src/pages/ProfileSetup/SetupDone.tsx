@@ -1,13 +1,11 @@
-import ProfileSetupStages from "./ProfileSetupStages";
+import useProfileSetupStore from "../../state-management/profileSetup/store";
 
-interface Props {
-    page: ProfileSetupStages
-}
-
-const SetupDone = ({ page }: Props) => {
+// Setup done page  
+const SetupDone = () => {
+    const { profileStages } = useProfileSetupStore();
     return (
         <>
-            {page["roomSetup"] && !page["loading"] &&
+            {profileStages.roomSetup && !profileStages.loading &&
                 <h2 style={{ position: "relative", top: "-50%" }}>All Setup! Login to the app to get started.</h2>
             }
         </>

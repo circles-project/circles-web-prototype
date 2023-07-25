@@ -8,12 +8,10 @@ import topStyles from '../commonStyles.module.css'
 import useAuthStore from '../../../state-management/auth/store.ts';
 
 const ReviewTerms = () => {
-    const { stages, registrationParams, setLoading, setTermsAccepted} = useAuthStore();
+    const { authStages, registrationParams, setLoading, setTermsAccepted} = useAuthStore();
     const termsParams = registrationParams["m.login.terms"];
     const [title, setTitle] = useState(termsParams.policies[0].name + " " + termsParams.policies[0].version);
 
-
-    // console.log("termsParams: " + termsParams);
     const handleClick = () => {
         if (title === "privacy " + termsParams.policies[0].version) {
             setTitle(termsParams.policies[1].name + " " + termsParams.policies[1].version);
@@ -21,10 +19,9 @@ const ReviewTerms = () => {
             let authBody = {
                 "auth": {
                     "type": "m.login.terms",
-                    "session": stages.sessionId
+                    "session": authStages.sessionId
                 }
             }
-            // pageUpdate({ ...page, "loading": true });
             setLoading(true);
             fetch(REGISTRATION_URL, {
                 method: "POST",
@@ -37,15 +34,11 @@ const ReviewTerms = () => {
                 .then((response) => response.json())
                 .then(json => {
                     console.log(json);
-
-                    // page["terms-accepted"] = true;
-                    // pageUpdate({ ...page, "terms-accepted": true, "loading": false });
                     setTermsAccepted(true);
                     setLoading(false);
                 })
                 .catch((error) => {
                     console.log("Error: " + error);
-                    // pageUpdate({ ...page, "loading": false });
                     setLoading(false);
                 });
         }
@@ -53,11 +46,9 @@ const ReviewTerms = () => {
 
     return (
         <>
-            {!stages.termsAccepted && !stages.loading && (
+            {!authStages.termsAccepted && !authStages.loading && (
                 <>
                     <h1 className={topStyles.registrationTitle}>Review {title}</h1>
-
-                    {/* Future Idea: Might be cleaner to have the links to the terms/policy instead of embedding */}
                     <div >
                         <PrivacyPolicy title={title} termsParams={termsParams} />
                         <Terms title={title} termsParams={termsParams} />

@@ -1,6 +1,5 @@
 import VerifyEmail from "../VerifyEmail.tsx";
 import ReviewTerms from "../ReviewTerms/ReviewTermsAndPolicy.js";
-import { useState } from "react";
 import ChooseUser from "../ChooseUser.tsx";
 import ReactModal from 'react-modal';
 import CheckEmailCode from "../CheckEmailCode.js";
@@ -16,21 +15,17 @@ import SetupCircles from "../../ProfileSetup/SetupCircles.tsx";
 import SignupSuccess from "../SignupSuccess.tsx";
 import SetupDone from "../../ProfileSetup/SetupDone.tsx";
 import useAuthStore from "../../../state-management/auth/store.ts";
+import useProfileSetupStore from "../../../state-management/profileSetup/store.ts";
 
 function LandingPage() {
 
   ReactModal.setAppElement('#root');
 
-  const { stages, isRegistering, registrationParams, setSessionId, setIsRegistering, setRegistrationParams, reset } = useAuthStore();
+  const { authStages, isRegistering, registrationParams, setSessionId, setIsRegistering, setRegistrationParams, reset } = useAuthStore();
+  const { profileStages, isSettingUpProfile } = useProfileSetupStore();
 
   // TODO: Implement login stage?
   // const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [isSettingUpProfile, setIsSettingUpProfile] = useState(false);
-  const [profileSetupStages, setProfileSetupStages] = useState({
-    "avatar": false,
-    "roomSetup": false,
-    "loading": false,
-  });
 
   const handleCancel = () => {
     console.log("Canceling Registration");
@@ -38,6 +33,7 @@ function LandingPage() {
     reset();
   }
 
+  // Starts the registration process
   const handleClick = () => {
     fetch(REGISTRATION_URL, {
       method: "POST",
@@ -60,6 +56,14 @@ function LandingPage() {
       });
   }
 
+  // For testing purposes
+  // useEffect(() => {
+  //   console.log("Change Detected in AuthStages: ", authStages);
+  // }, [authStages]);
+  // useEffect(() => {
+  //   console.log("Change Detected in ProfileStages: ", profileStages);
+  // }, [profileStages]);
+
   return (
     <>
       <div className={styles.homeCentering}>
@@ -79,10 +83,10 @@ function LandingPage() {
             <VerifyEmail />
             <CheckEmailCode />
             <SetPassphrase />
-            <SignupSuccess isSettingUpProfile={isSettingUpProfile} setIsSettingUpProfile={setIsSettingUpProfile} />
+            <SignupSuccess />
           </>
         ) : null}
-        <LoadingScreen active={stages.loading}/>
+        <LoadingScreen active={authStages.loading}/>
         <button onClick={handleCancel} className={styles.cancelBtn}>
           Cancel
         </button>
@@ -90,10 +94,10 @@ function LandingPage() {
 
       {/* Profile Setup Components */}
       <ReactModal style={{ overlay: { position: "absolute", width: "50%", left: "25%" } }} isOpen={isSettingUpProfile}>
-        <SetupProfile page={profileSetupStages} pageUpdate={setProfileSetupStages} />
-        <SetupCircles page={profileSetupStages} pageUpdate={setProfileSetupStages} />
-        <LoadingScreen active={profileSetupStages.loading} />
-        <SetupDone page={profileSetupStages} />
+        <SetupProfile />
+        <SetupCircles />
+        <LoadingScreen active={profileStages.loading} />
+        <SetupDone/>
       </ReactModal>
     </>
   );

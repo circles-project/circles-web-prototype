@@ -8,8 +8,9 @@ import { DOMAIN } from '../RegistrationConstants.ts';
 import { oprfRequest } from "../bsspeke/apiClient.ts";
 import useAuthStore from "../../../state-management/auth/store.ts";
 
+// Set passphrase page
 const SetPassphrase = () => {
-    const { stages, registrationParams, setLoading, setPassword, setRegistrationResponse} = useAuthStore();
+    const { authStages, registrationParams, setLoading, setPassword, setRegistrationResponse} = useAuthStore();
 
     const [passwordInput, setPasswordInput] = useState<string>("");
     const confirmPasswordInput = useRef<HTMLInputElement>(null);
@@ -27,14 +28,11 @@ const SetPassphrase = () => {
                 return;
             }
 
-            const user_id = "@" + stages.username + ":" + DOMAIN;
+            const user_id = "@" + authStages.username + ":" + DOMAIN;
             const client = new Client(user_id, DOMAIN, passwordInput);
             
-            oprfRequest(client,registrationParams["m.enroll.bsspeke-ecc.oprf"], stages, setLoading, setPassword, setFeedback, setRegistrationResponse);
-
+            oprfRequest(client,registrationParams["m.enroll.bsspeke-ecc.oprf"], authStages, setLoading, setPassword, setFeedback, setRegistrationResponse);
             setLoading(true);
-            
-
         } else {
             console.log("Password is null");
             setFeedback("Password is empty");
@@ -43,7 +41,7 @@ const SetPassphrase = () => {
 
     return (
         <>
-            {stages.correctCode && !stages.password && !stages.loading && (
+            {authStages.correctCode && !authStages.password && !authStages.loading && (
                 <>
                     <h1 className={styles.registrationTitle}>Set Passphrase</h1>
                     <input className={styles.invisibleInput} style={{ top: "20%" }} type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Password" />

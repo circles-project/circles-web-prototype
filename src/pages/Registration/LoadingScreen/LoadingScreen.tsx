@@ -5,7 +5,7 @@ interface Props {
     active: boolean;
 }
 
-const SetPassphrase = ({active}: Props) => {
+const LoadingScreen = ({active}: Props) => {
 
     return (
         <>
@@ -19,4 +19,4 @@ const SetPassphrase = ({active}: Props) => {
     );
 }
 
-export default SetPassphrase;
+export default LoadingScreen;

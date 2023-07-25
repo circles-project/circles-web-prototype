@@ -1,19 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { setDisplayName, setProfileAvatar } from "./apiCalls.ts";
-import ProfileSetupStages from "./ProfileSetupStages.ts";
 import { Container, Image } from "react-bootstrap";
 import { BsPersonSquare } from "react-icons/bs";
 import useAuthStore from "../../state-management/auth/store.ts";
+import useProfileSetupStore from "../../state-management/profileSetup/store.ts";
 
-interface Props {
-    page: ProfileSetupStages;
-    pageUpdate: React.Dispatch<React.SetStateAction<ProfileSetupStages>>;
-    // regResponse: RegistrationResponse | null;
-}
 
-const SetupProfile = ({ page, pageUpdate }: Props) => {
+// Setup profile page
+const SetupProfile = () => {
     const { registrationResponse } = useAuthStore();
+    const { profileStages, setAvatar, setLoading } = useProfileSetupStore();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarURL, setAvatarURL] = useState<string | null>(null); // Change the type to string or null
     const name = useRef<HTMLInputElement>(null);
@@ -30,13 +27,17 @@ const SetupProfile = ({ page, pageUpdate }: Props) => {
         }
     };
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (name.current !== null) {
-            console.log("Name: " + name.current.value);
+            const nameVal = name.current.value;
+            console.log("Name: " + nameVal);
+            setLoading(true);
 
             // Submitting display name and avatar to server
-            setProfileAvatar(avatarFile, registrationResponse);
-            setDisplayName(name.current.value, registrationResponse, pageUpdate, page);
+            await setProfileAvatar(avatarFile, registrationResponse);
+            await setDisplayName(nameVal, registrationResponse);
+            setAvatar(true);
+            setLoading(false);
 
         } else {
             console.log("Name is null");
@@ -44,7 +45,7 @@ const SetupProfile = ({ page, pageUpdate }: Props) => {
     }
     return (
         <Container style={{ height: "90%" }}>
-            {!page["loading"] && !page["avatar"] && (
+            {!profileStages.loading && !profileStages.avatar && (
                 <>
                     <h1 className="title">Setup Profile</h1>
                     {avatarURL ? (

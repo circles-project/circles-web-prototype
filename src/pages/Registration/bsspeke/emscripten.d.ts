@@ -1,3 +1,4 @@
+// Type definitions for emscripten 1.38.12 for use with emscripten compiled bsspeke code
 declare namespace Module {
     function ccall(
       ident: string,

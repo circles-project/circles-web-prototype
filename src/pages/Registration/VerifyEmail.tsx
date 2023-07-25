@@ -6,19 +6,20 @@ import './RegistrationConstants.ts'
 import { REGISTRATION_URL } from './RegistrationConstants.ts';
 import useAuthStore from '../../state-management/auth/store.ts';
 
+// Email submit page
 const CheckEmailCode = () => {
-    const { stages, setLoading, setEmail } = useAuthStore();
+    const { authStages, setLoading, setEmail } = useAuthStore();
     const emailInput = useRef<HTMLInputElement>(null);
     const [feedback, setFeedback] = useState<string>("Enter an email");
     let redText = feedback === "Enter an email" ? "black" : "red";
 
+    // Submit email logic (sends request to server for email verification code)
     const handleClick = () => {
-
         if (emailInput.current !== null) {
             let authBody = {
                 "auth": {
                     "type": "m.enroll.email.request_token",
-                    "session": stages.sessionId,
+                    "session": authStages.sessionId,
                     "email": String(emailInput.current.value)
                 }
             }
@@ -56,7 +57,7 @@ const CheckEmailCode = () => {
 
     return (
         <>
-            {stages.username !== "" && !stages.email && !stages.loading && (
+            {authStages.username !== "" && !authStages.email && !authStages.loading && (
                 <>
                     <h1 className={styles.registrationTitle}>Verify Email</h1>
                     <input className={styles.invisibleInput} ref={emailInput} type="text" placeholder="Email" />

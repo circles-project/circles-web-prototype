@@ -1,4 +1,4 @@
-import RegistrationParams from "../Interfaces/RegistrationParams";
+import { RegistrationParams } from "../../../state-management/auth/store";
 import { REGISTRATION_URL } from "../RegistrationConstants";
 import Client from "./BSSpekeWrapper";
 import { fromByteArray, toByteArray } from "base64-js";
@@ -7,7 +7,6 @@ import { AuthStages, RegistrationResponse } from "../../../state-management/auth
 
 // Executes m.enroll.bsspeke-ecc.oprf request
 export function oprfRequest(client: Client, setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"], stages: AuthStages, setLoading: (loading: boolean) => void, setPassword: (password: boolean) => void, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: (regResponse: RegistrationResponse) => void) {
-//TODO: Finish up adding parameters to the request from useAuthStore
     const blind = client.generateBlind();
     const blindBase64 = fromByteArray(blind);
 
@@ -40,8 +39,6 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                 console.log(json);
 
                 const decodedSalt = toByteArray(json.params["m.enroll.bsspeke-ecc.save"].blind_salt);
-                // page["password"] = true;
-                // pageUpdate({ ...page, "password": true, "loading": false });
                 setPassword(true);
                 setLoading(false);
 
@@ -59,7 +56,6 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
                         "phf_params": setPasswordParams.phf_params,
                     }
                 }
-                // pageUpdate({ ...page, "loading": true });
                 setLoading(true);
                 saveRequest(authBody2, setLoading, setPassword, setFeedback, setRegistrationResponse);
             }
@@ -67,7 +63,6 @@ export function oprfRequest(client: Client, setPasswordParams: RegistrationParam
         .catch((error) => {
             console.log(error);
             setFeedback("Error: " + error);
-            // pageUpdate({ ...page, "loading": false });
             setLoading(false);
         });
 }
@@ -90,8 +85,6 @@ function saveRequest(authBody2: any, setLoading: (loading: boolean) => void, set
                 setFeedback("Error: " + json.error);
             } else {
                 console.log(json);
-                // page["password"] = true;
-                // pageUpdate({ ...page, "password": true, "loading": false });
                 setPassword(true);
                 setLoading(false);
                 setRegistrationResponse(json);
@@ -100,7 +93,6 @@ function saveRequest(authBody2: any, setLoading: (loading: boolean) => void, set
         .catch((error) => {
             console.log("Error: ", error);
             setFeedback("Error: " + error);
-            // pageUpdate({ ...page, "loading": false });
             setLoading(false);
         });
 }

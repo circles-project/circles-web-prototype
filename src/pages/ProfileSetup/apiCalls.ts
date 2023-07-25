@@ -1,9 +1,8 @@
 import { SERVER, DOMAIN } from '../Registration/RegistrationConstants.ts';
-import ProfileSetupStages from './ProfileSetupStages.ts';
 import { RegistrationResponse } from '../../state-management/auth/store.ts';
 
 //TODO: Check type of joinRules and powerLevels
-export async function createRoom(roomName: string, topic: string, avatarFile: File | null, invite_ids: string[] | null, roomType: string | null, roomTag: string, parentId: string, powerLevels: object, joinRule: string, regRes: RegistrationResponse | null): Promise<string> {
+export async function createRoom(roomName: string, topic: string, avatarFile: File | null, roomType: string | null, roomTag: string, parentId: string, powerLevels: object, regRes: RegistrationResponse | null): Promise<string> {
     const CREATE_URL = SERVER + '/_matrix/client/v3/createRoom';
     try {
         const response = await fetch(CREATE_URL, {
@@ -36,7 +35,6 @@ export async function createRoom(roomName: string, topic: string, avatarFile: Fi
             await establishParentChildRelationship(parentId, data.room_id, regRes);
         }
         if (roomType === "org.futo.social.group" || roomType === "org.futo.social.gallery" || roomType === "org.futo.social.timeline") {
-            // TODO: Send an m.room.encrption event to the room to add room encryption, maybe also setup a message function
             await sendEvent(data.room_id, "m.room.encryption", { "algorithm": "m.megolm.v1.aes-sha2", }, regRes, "");
         }
 
@@ -61,11 +59,8 @@ export async function sendEvent(roomId: string, eventType: string, content: obje
         body: JSON.stringify(content)
     })
         .then(response => response.json())
-        .then(data => {
-            // console.log("Event Sent: ", data);
-        })
         .catch((error) => {
-            // console.log('Error:', error);
+            console.log('Error:', error);
         });
 
 }
@@ -74,7 +69,7 @@ export async function sendEvent(roomId: string, eventType: string, content: obje
 async function setTags(userId: string | undefined, roomId: string, tag: string, regRes: RegistrationResponse | null): Promise<void> {
     const TAGS_URL = SERVER + '/_matrix/client/v3/user/' + userId + '/rooms/' + roomId + '/tags/' + tag;
     try {
-        const response = await fetch(TAGS_URL, {
+        await fetch(TAGS_URL, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -306,9 +301,9 @@ export function getDisplayName(regResponse: RegistrationResponse | null): Promis
 }
 
 // Sets the users display name
-export function setDisplayName(displayName: string, regResponse: RegistrationResponse | null, pageUpdate: Function, page: ProfileSetupStages) {
+export async function setDisplayName(displayName: string, regResponse: RegistrationResponse | null): Promise<void> {
     const DISPLAY_NAME_URL = SERVER + '/_matrix/client/v3/profile/' + regResponse?.user_id + '/displayname';
-    pageUpdate({ ...page, "loading": true });
+    // pageUpdate({ ...page, "loading": true });
     fetch(DISPLAY_NAME_URL, {
         method: "PUT",
         body: JSON.stringify({
@@ -323,7 +318,7 @@ export function setDisplayName(displayName: string, regResponse: RegistrationRes
         .then((response) => response.json())
         .then(json => {
             console.log("Display Name Set: ", json);
-            pageUpdate({ ...page, "avatar": true });
+            // pageUpdate({ ...page, "avatar": true });
         })
         .catch((error) => {
             console.log("Error: " + error);

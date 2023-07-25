@@ -6,8 +6,9 @@ import './RegistrationConstants.ts'
 import { REGISTRATION_URL } from './RegistrationConstants.ts';
 import useAuthStore from '../../state-management/auth/store.ts';
 
+// Choose username page
 const ChooseUser = () => {
-  const { stages, setLoading, setUsername } = useAuthStore();
+  const { authStages, setLoading, setUsername } = useAuthStore();
   const username = useRef<HTMLInputElement>(null);
   const [feedback, setFeedback] = useState<string>("Enter a Username");
   let redText = feedback === "Enter a Username" ? "black" : "red";
@@ -17,12 +18,14 @@ const ChooseUser = () => {
       let authBody = {
         "auth": {
           "type": "m.enroll.username",
-          "session": stages.sessionId,
+          "session": authStages.sessionId,
           "username": username.current.value
         }
       }
       setLoading(true);
       setUsername(username.current.value);
+
+
       fetch(REGISTRATION_URL, {
         method: "POST",
         body: JSON.stringify(authBody),
@@ -55,7 +58,7 @@ const ChooseUser = () => {
 
   return (
     <>
-      {stages.termsAccepted && !stages.username && !stages.loading && (
+      {authStages.termsAccepted && !authStages.username && !authStages.loading && (
         <>
           <h1 className={styles.registrationTitle}>Choose a Username</h1>
           <input className={styles.invisibleInput} ref={username} type="text" placeholder="Username" />

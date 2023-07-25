@@ -1,4 +1,4 @@
-import RegistrationParams from "../Interfaces/RegistrationParams";
+import { RegistrationParams } from "../../../state-management/auth/store";
 
 // Class to wrap the bsspeke client and interact with emscripten compiled code
 class Client {
@@ -19,6 +19,7 @@ class Client {
     console.log("Client init success: ", success);
   }
 
+  // Generates a blind for the client
   generateBlind(): Uint8Array {
 
     const blindPointer = Module.ccall("bsspeke_client_generate_blind", "number", ["array", "number"], [new Uint8Array(32), this.ctx]);
@@ -27,6 +28,7 @@ class Client {
 
   }
 
+  // Generates P and V hashes for the client
   generatePAndV(blind_salt: Uint8Array, passwordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"]["phf_params"]): { PArray: Uint8Array; VArray: Uint8Array } {
     const P = Module._malloc(32);
     const V = Module._malloc(32);
@@ -43,6 +45,7 @@ class Client {
 }
 
 function encodeUTF8(str: string): string {
+  
   // Encode the string from UTF-16 to UTF-8
   const encoder = new TextEncoder();
   const utf8Array = encoder.encode(str);
@@ -53,6 +56,7 @@ function encodeUTF8(str: string): string {
 
 }
 
+// Decode a UTF-8 byte array to a stirng
 export function decodeUTF8(bytes: Uint8Array): string {
   const utf8Decoder = new TextDecoder("utf-8");
   return utf8Decoder.decode(bytes);
