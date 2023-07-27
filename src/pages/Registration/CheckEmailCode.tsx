@@ -12,7 +12,7 @@ const CheckCode = () => {
     const [feedback, setFeedback] = useState<string>("Enter the code");
     let redText = feedback === "Enter the code" ? "black" : "red";
 
-    // Submit code logic (sends email verificatio code to server)
+    // Submit code logic (sends email verification code to server)
     const handleClick = () => {
 
         if (codeInput.current !== null) {

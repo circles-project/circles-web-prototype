@@ -7,7 +7,6 @@ import SetPassphrase from "../SetPassphrase/SetPassphrase.tsx";
 import LoadingScreen from "../LoadingScreen/LoadingScreen.tsx";
 import { Button } from "react-bootstrap";
 import styles from "./LandingPage.module.css";
-import { _generate_random_bytes } from "../bsspeke/EmccBsspeke.js";
 import '../RegistrationConstants.ts';
 import { REGISTRATION_URL } from "../RegistrationConstants.ts";
 import SetupProfile from "../../ProfileSetup/SetupProfile.tsx";

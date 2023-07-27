@@ -7,6 +7,7 @@ import { REGISTRATION_URL } from '../RegistrationConstants.ts';
 import topStyles from '../commonStyles.module.css'
 import useAuthStore from '../../../state-management/auth/store.ts';
 
+// Review terms and policy page
 const ReviewTerms = () => {
     const { authStages, registrationParams, setLoading, setTermsAccepted} = useAuthStore();
     const termsParams = registrationParams["m.login.terms"];

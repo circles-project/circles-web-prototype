@@ -1,6 +1,7 @@
 import { SERVER, DOMAIN } from '../Registration/RegistrationConstants.ts';
 import { RegistrationResponse } from '../../state-management/auth/store.ts';
 
+// Create a room with the given parameters by sending m.room.create event to server
 //TODO: Check type of joinRules and powerLevels
 export async function createRoom(roomName: string, topic: string, avatarFile: File | null, roomType: string | null, roomTag: string, parentId: string, powerLevels: object, regRes: RegistrationResponse | null): Promise<string> {
     const CREATE_URL = SERVER + '/_matrix/client/v3/createRoom';

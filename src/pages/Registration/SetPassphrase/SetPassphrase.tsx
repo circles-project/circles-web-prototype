@@ -31,6 +31,7 @@ const SetPassphrase = () => {
             const user_id = "@" + authStages.username + ":" + DOMAIN;
             const client = new Client(user_id, DOMAIN, passwordInput);
             
+            // Initiates the oprf request and the password auth flow
             oprfRequest(client,registrationParams["m.enroll.bsspeke-ecc.oprf"], authStages, setLoading, setPassword, setFeedback, setRegistrationResponse);
             setLoading(true);
         } else {

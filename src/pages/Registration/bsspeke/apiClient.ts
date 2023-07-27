@@ -6,8 +6,8 @@ import { AuthStages, RegistrationResponse } from "../../../state-management/auth
 
 
 // Executes m.enroll.bsspeke-ecc.oprf request
-export function oprfRequest(client: Client, setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"], stages: AuthStages, setLoading: (loading: boolean) => void, setPassword: (password: boolean) => void, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: (regResponse: RegistrationResponse) => void) {
-    const blind = client.generateBlind();
+export async function oprfRequest(client: Client, setPasswordParams: RegistrationParams["m.enroll.bsspeke-ecc.oprf"], stages: AuthStages, setLoading: (loading: boolean) => void, setPassword: (password: boolean) => void, setFeedback: React.Dispatch<React.SetStateAction<string>>, setRegistrationResponse: (regResponse: RegistrationResponse) => void) {
+    const blind = await client.generateBlind();
     const blindBase64 = fromByteArray(blind);
 
     // // btoa is a base64 encoding function that creates a Base64-encoded ASCII string from a binary string
