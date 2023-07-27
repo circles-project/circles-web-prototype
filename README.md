@@ -41,7 +41,7 @@ cd circles-web-interface
 # install dependencies needed to run the project in the root folder of the project
 npm install
 
-# run the development server (Note: Domain in RegistrationConstants.ts is set to U.S. production server circu.li, switch to varun.circles.dev.net for my development server)
+# run the development server (Note: Domain in RegistrationConstants.ts is set to U.S. production server circu.li, switch to varun.circles-dev.net for my development server - email token will be sent to postmark account)
 npm run dev
 ```
 
