@@ -14,8 +14,8 @@ with any spec-compliant Matrix server.
 Security - Circles offers the same security guarantees as Matrix, using the same
 E2E encryption code as in Element and other popular Matrix clients.
 
-[Circles code](https://gitlab.futo.org/circles)
-[Circles Website](https://circu.li/circles.html)
+- [Circles code](https://gitlab.futo.org/circles)
+- [Circles Website](https://circu.li/circles.html)
 
 # Current Features
 User Registration and Authentication
@@ -33,10 +33,10 @@ User Registration and Authentication
 
 ```
 # open a shell/terminal and navigate to the desired folder to clone the repository
-git clone
+git clone https://gitlab.futo.org/varun/circles-web-interface.git
 
 # navigate to the newly created project directory
-cd Circle-Web-Interface
+cd circles-web-interface
 
 # install dependencies needed to run the project in the root folder of the project
 npm install
