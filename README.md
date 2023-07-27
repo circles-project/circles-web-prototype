@@ -51,3 +51,5 @@ npm run dev
 npm run build 
 ```
 
+![FUTO](https://futo.org/wp-content/uploads/2022/08/FutoTwitterDefaultPreview2.jpg)
+This project is a product of [FUTO](https://futo.org/). FUTO is an organization dedicated to developing, both through in-house engineering and investment, technologies that frustrate centralization and industry consolidation. FUTO aims to develop and fund open-source tech that gives you back privacy and control.
