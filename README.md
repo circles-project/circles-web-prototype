@@ -14,26 +14,26 @@ with any spec-compliant Matrix server.
 Security - Circles offers the same security guarantees as Matrix, using the same
 E2E encryption code as in Element and other popular Matrix clients.
 
-- [Circles code](https://gitlab.futo.org/circles)
-- [Circles Website](https://circu.li/circles.html)
+- [Circles code](https://github.com/circles-project)
+- [Circles Website](http://circles-project.github.io/)
 
 # Current Features
 User Registration and Authentication
-- Implementation of the [swiclops](https://gitlab.futo.org/cvwright/swiclops) authentication flows
+- Implementation of the [swiclops](https://github.com/circles-project/swiclops) authentication flows
      - Username and password validation
      - token based email validation
      - [BS-Speke](https://gist.github.com/Sc00bz/e99e48a6008eef10a59d5ec7b4d87af3) cryptographic password enrollment/verification
 - Profile and Circles Setup
     - Name and display picture setup
     - Default room setup including room avatar selection
-    - Creation of the [Circles Hierarchy](https://gitlab.futo.org/circles/circles-spec/-/blob/main/0000-spaces-hierarchy.md) with encrypted rooms and the given attributes
+    - Creation of the [Circles Hierarchy](https://github.com/circles-project/circles-spec/blob/main/0000-spaces-hierarchy.md) with encrypted rooms and the given attributes
 
 # Quickstart
 ## Development Quickstart
 
 ```
 # open a shell/terminal and navigate to the desired folder to clone the repository
-git clone https://gitlab.futo.org/varun/circles-web-interface.git
+git clone https://github.com/circles-project/circles-web-prototype.git
 
 # navigate to the newly created project directory
 cd circles-web-interface
@@ -48,8 +48,5 @@ npm run dev
 ## Build for production
 ```
 # Follow the same steps as above (Development Quickstart) except for npm run dev
-npm run build 
+npm run build
 ```
-
-# FUTO
-This project is a product of [FUTO](https://futo.org/). FUTO is an organization dedicated to developing, both through in-house engineering and investment, technologies that frustrate centralization and industry consolidation. FUTO aims to develop and fund open-source tech that gives you back privacy and control.
