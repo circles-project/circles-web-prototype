@@ -15,7 +15,7 @@ Security - Circles offers the same security guarantees as Matrix, using the same
 E2E encryption code as in Element and other popular Matrix clients.
 
 - [Circles code](https://github.com/circles-project)
-- [Circles Website](http://circles-project.github.io/)
+- [Circles Website](https://circles-project.github.io/)
 
 # Current Features
 User Registration and Authentication
