@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import './RegistrationConstants.ts'
 import { REGISTRATION_URL } from './RegistrationConstants.ts';
 import useAuthStore from '../../state-management/auth/store.ts';
+import Form from 'react-bootstrap/Form';
 
 // Choose username page
 const ChooseUser = () => {
@@ -60,10 +61,10 @@ const ChooseUser = () => {
     <>
       {authStages.termsAccepted && !authStages.username && !authStages.loading && (
         <>
-          <h1 className={styles.registrationTitle}>Choose a Username</h1>
-          <input className={styles.invisibleInput} ref={username} type="text" placeholder="Username" />
-          <text className={styles.feedbackText} style={{ color: redText }}>{feedback}</text>
-          <Button variant="primary" className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
+            <h1 className={styles.registrationTitle}>Choose a Username</h1>
+            <input className={styles.invisibleInput} ref={username} type="text" placeholder="Username" />
+            <Form.Text className={styles.feedbackText} style={{ color: redText }}>{feedback}</Form.Text>
+            <Button variant="primary" className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
         </>
       )}
     </>

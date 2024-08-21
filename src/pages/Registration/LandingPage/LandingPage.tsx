@@ -65,39 +65,41 @@ function LandingPage() {
 
   return (
     <>
-      <div className={styles.homeCentering}>
-        <h1 style={{}}>Circles</h1>
-        <h2 style={{ marginTop: "3%" }}>Safe and Encrypted Networking</h2>
-        <Button style={{ marginTop: "3%" }} onClick={handleClick}>
-          Sign Up
-        </Button>
+      <div className="body" id="root">
+        <div className={styles.homeCentering}>
+          <h1 style={{}}>Circles</h1>
+          <h2 style={{ marginTop: "3%" }}>Safe and Encrypted Networking</h2>
+          <Button style={{ marginTop: "3%" }} onClick={handleClick}>
+            Sign Up
+          </Button>
+        </div>
+
+        {/* Registration Components */}
+        <ReactModal isOpen={isRegistering} style={{ overlay: { position: "absolute", width: "50%", left: "25%" }, content: { display: "grid" }, }}>
+          {registrationParams !== null ? (
+            <>
+              <ReviewTerms />
+              <ChooseUser />
+              <VerifyEmail />
+              <CheckEmailCode />
+              <SetPassphrase />
+              <SignupSuccess />
+            </>
+          ) : null}
+          <LoadingScreen active={authStages.loading}/>
+          <button onClick={handleCancel} className={styles.cancelBtn}>
+            Cancel
+          </button>
+        </ReactModal>
+
+        {/* Profile Setup Components */}
+        <ReactModal style={{ overlay: { position: "absolute", width: "50%", left: "25%" } }} isOpen={isSettingUpProfile}>
+          <SetupProfile />
+          <SetupCircles />
+          <LoadingScreen active={profileStages.loading} />
+          <SetupDone/>
+        </ReactModal>
       </div>
-
-      {/* Registration Components */}
-      <ReactModal isOpen={isRegistering} style={{ overlay: { position: "absolute", width: "50%", left: "25%" }, content: { display: "grid" }, }}>
-        {registrationParams !== null ? (
-          <>
-            <ReviewTerms />
-            <ChooseUser />
-            <VerifyEmail />
-            <CheckEmailCode />
-            <SetPassphrase />
-            <SignupSuccess />
-          </>
-        ) : null}
-        <LoadingScreen active={authStages.loading}/>
-        <button onClick={handleCancel} className={styles.cancelBtn}>
-          Cancel
-        </button>
-      </ReactModal>
-
-      {/* Profile Setup Components */}
-      <ReactModal style={{ overlay: { position: "absolute", width: "50%", left: "25%" } }} isOpen={isSettingUpProfile}>
-        <SetupProfile />
-        <SetupCircles />
-        <LoadingScreen active={profileStages.loading} />
-        <SetupDone/>
-      </ReactModal>
     </>
   );
 

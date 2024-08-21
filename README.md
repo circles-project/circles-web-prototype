@@ -15,7 +15,7 @@ Security - Circles offers the same security guarantees as Matrix, using the same
 E2E encryption code as in Element and other popular Matrix clients.
 
 - [Circles code](https://github.com/circles-project)
-- [Circles Website](https://circles-project.github.io/)
+- [Circles Website](https://circles-project.github.io)
 
 # Current Features
 User Registration and Authentication
@@ -36,7 +36,7 @@ User Registration and Authentication
 git clone https://github.com/circles-project/circles-web-prototype.git
 
 # navigate to the newly created project directory
-cd circles-web-interface
+cd circles-web
 
 # install dependencies needed to run the project in the root folder of the project
 npm install

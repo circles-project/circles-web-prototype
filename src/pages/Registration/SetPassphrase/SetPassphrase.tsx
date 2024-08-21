@@ -7,6 +7,7 @@ import Client from "../bsspeke/BSSpekeWrapper.js";
 import { DOMAIN } from '../RegistrationConstants.ts';
 import { oprfRequest } from "../bsspeke/apiClient.ts";
 import useAuthStore from "../../../state-management/auth/store.ts";
+import Form from 'react-bootstrap/Form';
 
 // Set passphrase page
 const SetPassphrase = () => {
@@ -30,7 +31,7 @@ const SetPassphrase = () => {
 
             const user_id = "@" + authStages.username + ":" + DOMAIN;
             const client = new Client(user_id, DOMAIN, passwordInput);
-            
+
             // Initiates the oprf request and the password auth flow
             oprfRequest(client,registrationParams["m.enroll.bsspeke-ecc.oprf"], authStages, setLoading, setPassword, setFeedback, setRegistrationResponse);
             setLoading(true);
@@ -48,7 +49,7 @@ const SetPassphrase = () => {
                     <input className={styles.invisibleInput} style={{ top: "20%" }} type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Password" />
                     <PasswordStrengthBar className={passStyles.passwordBar} style={{ position: "absolute" }} password={passwordInput} />
                     <input className={styles.invisibleInput} style={{ top: "35%" }} type="password" ref={confirmPasswordInput} placeholder="Confirm Password" />
-                    <text className={styles.feedbackText} style={{ top: "150%", textAlign: "center", color: redText }} >{feedback}</text>
+                    <Form.Text className={styles.feedbackText} style={{ top: "150%", textAlign: "center", color: redText }} >{feedback}</Form.Text>
                     <Button className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
                 </>
             )}

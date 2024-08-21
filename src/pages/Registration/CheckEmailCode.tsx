@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { useState } from "react";
 import { REGISTRATION_URL } from "./RegistrationConstants";
 import useAuthStore from "../../state-management/auth/store";
+import Form from 'react-bootstrap/Form';
 
 // Email code verification page
 const CheckCode = () => {
@@ -14,6 +15,9 @@ const CheckCode = () => {
 
     // Submit code logic (sends email verification code to server)
     const handleClick = () => {
+        // no op since disabled email verification
+        setCorrectCode(true);
+        return;
 
         if (codeInput.current !== null) {
             let authBody = {
@@ -61,7 +65,7 @@ const CheckCode = () => {
                 <>
                     <h2 className={styles.registrationTitle}>Enter the 6 digit code you received in your email</h2>
                     <input className={styles.invisibleInput} ref={codeInput} type="number" placeholder="6 digit code" />
-                    <text className={styles.feedbackText} style={{ color: redText }}>{feedback}</text>
+                    <Form.Text className={styles.feedbackText} style={{ color: redText }}>{feedback}</Form.Text>
                     <Button className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
                 </>
             )}

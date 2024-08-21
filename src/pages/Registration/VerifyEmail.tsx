@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import './RegistrationConstants.ts'
 import { REGISTRATION_URL } from './RegistrationConstants.ts';
 import useAuthStore from '../../state-management/auth/store.ts';
+import Form from 'react-bootstrap/Form';
 
 // Email submit page
 const CheckEmailCode = () => {
@@ -15,6 +16,10 @@ const CheckEmailCode = () => {
 
     // Submit email logic (sends request to server for email verification code)
     const handleClick = () => {
+        // no op since disabled email verification
+        setEmail(true);
+        return;
+
         if (emailInput.current !== null) {
             let authBody = {
                 "auth": {
@@ -61,7 +66,7 @@ const CheckEmailCode = () => {
                 <>
                     <h1 className={styles.registrationTitle}>Verify Email</h1>
                     <input className={styles.invisibleInput} ref={emailInput} type="text" placeholder="Email" />
-                    <text className={styles.feedbackText} style={{ color: redText }}>{feedback}</text>
+                    <Form.Text className={styles.feedbackText} style={{ color: redText }}>{feedback}</Form.Text>
                     <Button className={styles.defaultSubmitBtn} onClick={handleClick}>Submit</Button>
                 </>
             )}

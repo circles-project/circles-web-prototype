@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import { setDisplayName, setProfileAvatar } from "./apiCalls.ts";
+// import { setDisplayName, setProfileAvatar } from "./apiCalls.ts";
 import { Container, Image } from "react-bootstrap";
 import { BsPersonSquare } from "react-icons/bs";
 import useAuthStore from "../../state-management/auth/store.ts";
 import useProfileSetupStore from "../../state-management/profileSetup/store.ts";
 
+import * as matrix from "matrix-js-sdk";
 
 // Setup profile page
 const SetupProfile = () => {
@@ -16,6 +17,40 @@ const SetupProfile = () => {
     const name = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        // const setupCrypto = async () => {
+        //     console.log("Initializing matrix crypto...");
+        //     const matrixSdkCrypto = await import("@matrix-org/matrix-sdk-crypto-wasm");
+        //     await matrixSdkCrypto.initAsync();
+
+        //     // Optional: enable tracing in the rust-sdk
+        //     new matrixSdkCrypto.Tracing(matrixSdkCrypto.LoggerLevel.Trace).turnOn();
+
+        //     // Create a new OlmMachine
+        //     //
+        //     // The following will use an in-memory store. It is recommended to use
+        //     // indexedDB where that is available.
+        //     // See https://matrix-org.github.io/matrix-rust-sdk-crypto-wasm/classes/OlmMachine.html#initialize
+        //     const olmMachine = await matrixSdkCrypto.OlmMachine.initialize(
+        //         new matrixSdkCrypto.UserId(registrationResponse.user_id),
+        //         new matrixSdkCrypto.DeviceId(registrationResponse.device_id),
+        //     );
+
+        //     return olmMachine;
+        // }
+
+        console.log("Initializing matrix client...");
+        console.log("https://" + registrationResponse.user_id.split(':')[1]);
+        console.log(registrationResponse.access_token);
+        console.log(registrationResponse.user_id);
+
+        const matrixClient = matrix.createClient({
+            baseUrl: "https://" + registrationResponse.user_id.split(':')[1],
+            accessToken: registrationResponse.access_token,
+            userId: registrationResponse.user_id,
+        });
+
+        // setupCrypto();
+
         if (avatarFile !== null) {
             setAvatarURL(URL.createObjectURL(avatarFile));
         }
@@ -34,8 +69,9 @@ const SetupProfile = () => {
             setLoading(true);
 
             // Submitting display name and avatar to server
-            await setProfileAvatar(avatarFile, registrationResponse);
-            await setDisplayName(nameVal, registrationResponse);
+            // disabling due to mxc null exception
+            // await setProfileAvatar(avatarFile, registrationResponse);
+            // await setDisplayName(nameVal, registrationResponse);
             setAvatar(true);
             setLoading(false);
 
@@ -43,6 +79,7 @@ const SetupProfile = () => {
             console.log("Name is null");
         }
     }
+
     return (
         <Container style={{ height: "90%" }}>
             {!profileStages.loading && !profileStages.avatar && (
