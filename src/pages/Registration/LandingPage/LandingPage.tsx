@@ -16,10 +16,13 @@ import SetupDone from "../../ProfileSetup/SetupDone.tsx";
 import useAuthStore from "../../../state-management/auth/store.ts";
 import useProfileSetupStore from "../../../state-management/profileSetup/store.ts";
 
+import { useNavigate } from 'react-router-dom';
+
 function LandingPage() {
 
   ReactModal.setAppElement('#root');
 
+  const navigate = useNavigate();
   const { authStages, isRegistering, registrationParams, setSessionId, setIsRegistering, setRegistrationParams, reset } = useAuthStore();
   const { profileStages, isSettingUpProfile } = useProfileSetupStore();
 
@@ -55,6 +58,11 @@ function LandingPage() {
       });
   }
 
+  // Starts the registration process
+  const goBack = () => {
+    navigate('/');
+  }
+
   // For testing purposes
   // useEffect(() => {
   //   console.log("Change Detected in AuthStages: ", authStages);
@@ -71,6 +79,9 @@ function LandingPage() {
           <h2 style={{ marginTop: "3%" }}>Safe and Encrypted Networking</h2>
           <Button style={{ marginTop: "3%" }} onClick={handleClick}>
             Sign Up
+          </Button>
+          <Button style={{ marginTop: "3%", marginLeft: "5px" }} onClick={goBack}>
+            Back
           </Button>
         </div>
 

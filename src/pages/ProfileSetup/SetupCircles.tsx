@@ -90,7 +90,7 @@ const SetupCircles = () => {
                                         avatarURLS[0] ? (
                                             <Image src={avatarURLS[0]} className="img-fluid circlesPics" alt="Family Circles Picture" roundedCircle />
                                         ) : (
-                                            <BsImageFill size={80} className="img-fluid" alt="Family Circles Picture" roundedCircle />
+                                            <BsImageFill size={80} className="img-fluid" alt="Family Circles Picture" />
                                         )
                                     }
                                     <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 0)} />
@@ -106,7 +106,7 @@ const SetupCircles = () => {
                                         avatarURLS[1] ? (
                                             <Image src={avatarURLS[1]} className="img-fluid circlesPics" alt="Friends Circles Picture" roundedCircle />
                                         ) : (
-                                            <BsImageFill size={80} className="img-fluid" alt="Friends Circles Picture" roundedCircle />
+                                            <BsImageFill size={80} className="img-fluid" alt="Friends Circles Picture" />
                                         )
                                     }
                                     <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 1)} />
@@ -122,7 +122,7 @@ const SetupCircles = () => {
                                         avatarURLS[2] ? (
                                             <Image src={avatarURLS[2]} className="img-fluid circlesPics" alt="Community Circles Picture" roundedCircle />
                                         ) : (
-                                            <BsImageFill size={80} className="img-fluid" alt="Community Circles Picture" roundedCircle />
+                                            <BsImageFill size={80} className="img-fluid" alt="Community Circles Picture" />
                                         )
                                     }
                                     <input type="file" accept=".jpg, .jpeg" placeholder="Change" onChange={(event) => onImageChange(event, 2)} />

@@ -7,6 +7,7 @@ import useAuthStore from "../../state-management/auth/store.ts";
 import useProfileSetupStore from "../../state-management/profileSetup/store.ts";
 
 import * as matrix from "matrix-js-sdk";
+import useMatrixSdk from "../../state-management/MatrixSdk.ts";
 
 // Setup profile page
 const SetupProfile = () => {
@@ -15,6 +16,8 @@ const SetupProfile = () => {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarURL, setAvatarURL] = useState<string | null>(null); // Change the type to string or null
     const name = useRef<HTMLInputElement>(null);
+
+    const { client, setClient } = useMatrixSdk();
 
     useEffect(() => {
         // const setupCrypto = async () => {
@@ -38,23 +41,31 @@ const SetupProfile = () => {
         //     return olmMachine;
         // }
 
-        console.log("Initializing matrix client...");
-        console.log("https://" + registrationResponse.user_id.split(':')[1]);
-        console.log(registrationResponse.access_token);
-        console.log(registrationResponse.user_id);
+        console.log(client);
 
-        const matrixClient = matrix.createClient({
-            baseUrl: "https://" + registrationResponse.user_id.split(':')[1],
-            accessToken: registrationResponse.access_token,
-            userId: registrationResponse.user_id,
-        });
+        if (client === null) {
+            console.log("Initializing matrix client...");
 
-        // setupCrypto();
+            // console.log("https://" + registrationResponse.user_id.split(':')[1]);
+            // console.log(registrationResponse.access_token);
+            // console.log(registrationResponse.user_id);
+
+            const matrixClient = matrix.createClient({
+                // update eventually for user chosen server instead of hard-coded
+                baseUrl: "https://matrix." + registrationResponse.user_id.split(':')[1],
+                accessToken: registrationResponse.access_token,
+                userId: registrationResponse.user_id,
+            });
+
+            setClient(matrixClient);
+
+            // setupCrypto();
+        }
 
         if (avatarFile !== null) {
             setAvatarURL(URL.createObjectURL(avatarFile));
         }
-    }, [avatarFile]);
+    }, [avatarFile, client]);
 
     const onImageChange = (event: any) => {
         if (event.target.files && event.target.files[0]) {
@@ -72,6 +83,14 @@ const SetupProfile = () => {
             // disabling due to mxc null exception
             // await setProfileAvatar(avatarFile, registrationResponse);
             // await setDisplayName(nameVal, registrationResponse);
+
+            if (avatarFile) {
+                const response = await client?.uploadContent(avatarFile, { type: avatarFile.type });
+                await client?.setProfileInfo("avatar_url", { avatar_url: response!.content_uri });
+            }
+
+            await client?.setProfileInfo("displayname", { displayname: nameVal });
+
             setAvatar(true);
             setLoading(false);
 
