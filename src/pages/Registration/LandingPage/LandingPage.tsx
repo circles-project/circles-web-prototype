@@ -60,7 +60,7 @@ function LandingPage() {
 
   // Starts the registration process
   const goBack = () => {
-    navigate('/');
+    navigate('/login');
   }
 
   // For testing purposes
