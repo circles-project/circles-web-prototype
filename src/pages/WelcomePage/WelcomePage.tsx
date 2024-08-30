@@ -8,17 +8,67 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import Style from './WelcomePage.module.css';
-
 import Carousel from 'react-bootstrap/Carousel';
 
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import * as matrix from "matrix-js-sdk";
+import useMatrixSdk from "../../state-management/MatrixSdk.ts";
 
 function WelcomePage() {
   const navigate = useNavigate();
+  const { client, setClient } = useMatrixSdk();
 
+  useEffect(() => {
+    // const setupCrypto = async () => {
+    //     console.log("Initializing matrix crypto...");
+    //     const matrixSdkCrypto = await import("@matrix-org/matrix-sdk-crypto-wasm");
+    //     await matrixSdkCrypto.initAsync();
+
+    //     // Optional: enable tracing in the rust-sdk
+    //     new matrixSdkCrypto.Tracing(matrixSdkCrypto.LoggerLevel.Trace).turnOn();
+
+    //     // Create a new OlmMachine
+    //     //
+    //     // The following will use an in-memory store. It is recommended to use
+    //     // indexedDB where that is available.
+    //     // See https://matrix-org.github.io/matrix-rust-sdk-crypto-wasm/classes/OlmMachine.html#initialize
+    //     const olmMachine = await matrixSdkCrypto.OlmMachine.initialize(
+    //         new matrixSdkCrypto.UserId(registrationResponse.user_id),
+    //         new matrixSdkCrypto.DeviceId(registrationResponse.device_id),
+    //     );
+
+    //     return olmMachine;
+    // }
+
+    console.log(client);
+
+    if (client === null) {
+        console.log("Initializing matrix client...");
+
+        // console.log("https://" + registrationResponse.user_id.split(':')[1]);
+        // console.log(registrationResponse.access_token);
+        // console.log(registrationResponse.user_id);
+
+        const matrixClient = matrix.createClient({
+            // update eventually for user chosen server instead of hard-coded
+            baseUrl: "https://matrix." + registrationResponse.user_id.split(':')[1],
+            accessToken: registrationResponse.access_token,
+            userId: registrationResponse.user_id,
+        });
+
+        setClient(matrixClient);
+
+        // setupCrypto();
+    }
+}, [client]);
 
   function signup() {
     navigate('/signup');
+  }
+
+  const login = async () => {
+    // client?.login()
   }
 
   return (
@@ -94,7 +144,7 @@ function WelcomePage() {
 
                           {/* <Form.Check type="checkbox" label="Remember me" /> */}
 
-                        <Button variant="primary" type="submit">
+                        <Button className='btn-circles-primary' type="submit">
                           Submit
                         </Button>
                       </Card.Body>
@@ -104,7 +154,7 @@ function WelcomePage() {
                   <Card>
                       <Card.Body>
                         <Card.Title>Don't have an account?</Card.Title>
-                        <Button variant="primary" type="submit" onClick={signup}>
+                        <Button className='btn-circles-primary' type="submit" onClick={signup}>
                           Sign up
                         </Button>
                       </Card.Body>

@@ -41,7 +41,7 @@ const App = () => {
                     {/* todo: implement detail content after more work is done for main views */}
                     <div className='border' style={{ height: '90vh' }} >
                       <div>
-                        <Button>
+                        <Button className='btn-circles-primary'>
                           <TbLayoutSidebarRightFilled className='icon' onClick={() => setOpen(!open)} />
                         </Button>
                       </div>
@@ -57,7 +57,7 @@ const App = () => {
                     <div className='border' style={{ height: '90vh' }} >
                       <div>
                         <div>Detail Content</div>
-                        <Button>
+                        <Button className='btn-circles-primary'>
                           <TbLayoutSidebarLeftExpandFilled className='icon' onClick={() => setOpen(!open)} />
                         </Button>
                       </div>

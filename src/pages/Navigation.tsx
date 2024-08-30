@@ -4,7 +4,7 @@ import { Button, Image } from 'react-bootstrap';
 
 import { TbLayoutSidebarLeftExpandFilled } from "react-icons/tb";
 import { TbLayoutSidebarRightFilled } from "react-icons/tb";
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoSettingsSharp } from "react-icons/io5";
 import { PiCirclesFourLight } from "react-icons/pi";
 import { RiGroupLine } from "react-icons/ri";
 import { MdOutlineMessage } from "react-icons/md";
@@ -45,28 +45,28 @@ const Navigation = () => {
               <div className="p-2">Second item</div>
               <div className="p-2">Third item</div> */}
 
-              <Button>
+              <Button className='btn-circles-primary'>
                 <TbLayoutSidebarLeftExpandFilled className='icon' onClick={() => setOpen(!open)} />
               </Button>
               <div className='my-4'></div>
 
 
-              <Button>
+              <Button className='btn-circles-primary'>
                 <Image src="src/assets/logo/circles-logo-web.svg" className='icon' />
               </Button>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <PiCirclesFourLight className='icon' />
               </Button>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <RiGroupLine className='icon' />
               </Button>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <MdOutlineMessage className='icon' />
               </Button>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <MdOutlinePhotoSizeSelectActual className='icon' />
               </Button>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <GrGroup className='icon' />
               </Button>
 
@@ -78,9 +78,9 @@ const Navigation = () => {
 
               <div style={{ height: '100%' }}></div>
 
-              <Button onClick={toggleTheme}>TT</Button>
-              <Button>
-                <IoSettingsOutline className='icon' />
+              <Button className='btn-circles-primary' onClick={toggleTheme}>TT</Button>
+              <Button className='btn-circles-primary'>
+                <IoSettingsSharp className='icon' />
               </Button>
             </Stack>
           </div>
@@ -95,41 +95,41 @@ const Navigation = () => {
             <div className="p-2">Third item</div> */}
 
             <div className='d-flex flex-row-reverse'>
-              <Button>
+              <Button className='btn-circles-primary'>
                 <TbLayoutSidebarRightFilled className='icon' onClick={() => setOpen(!open)} />
               </Button>
             </div>
             <div className='my-4'></div>
 
-            <Button>
+            <Button className='btn-circles-primary'>
               <Image src="src/assets/logo/circles-logo-web.svg" className='icon' />
               <Image src="src/assets/title/circles_dark.svg" height={40} />
             </Button>
-            <Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
                   <PiCirclesFourLight className='icon' />
                   Circles
               </div>
             </Button>
-            <Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
                 <RiGroupLine className='icon' />
                 Groups
               </div>
             </Button>
-            <Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
                 <MdOutlineMessage className='icon' />
                 Messages
               </div>
             </Button>
-            <Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
                 <MdOutlinePhotoSizeSelectActual className='icon' />
                 Photos
               </div>
             </Button>
-            <Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
                 <GrGroup className='icon' />
                 People
@@ -139,10 +139,10 @@ const Navigation = () => {
 
             <div style={{ height: '100%' }}></div>
 
-            <Button onClick={toggleTheme}>toggle theme</Button>
-            <Button>
+            <Button className='btn-circles-primary' onClick={toggleTheme}>toggle theme</Button>
+            <Button className='btn-circles-primary'>
               <div className='d-flex flex-row'>
-                <IoSettingsOutline className='icon' />
+                <IoSettingsSharp className='icon' />
                 Settings
               </div>
             </Button>
